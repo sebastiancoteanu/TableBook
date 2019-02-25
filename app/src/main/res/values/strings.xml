@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Table Book</string>
+    <string name="button_name">Button</string>
 </resources>

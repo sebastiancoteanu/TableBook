@@ -1,4 +1,4 @@
-package com.sebas.licenta1;
+package com.sebas.licenta1.activities;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;

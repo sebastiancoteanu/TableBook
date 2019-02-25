@@ -1,7 +1,9 @@
-package com.sebas.licenta1;
+package com.sebas.licenta1.activities;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+
+import com.sebas.licenta1.R;
 
 public class MainActivity extends AppCompatActivity {
 
