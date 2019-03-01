@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="colorPrimary">#008577</color>
-    <color name="colorPrimaryLight">#F1F4F6</color>
-    <color name="colorAccent">#D81B60</color>
-    <color name="mainColor">#31A3E0</color>
+    <color name="colorPrimaryLight">#FFFFFF</color>
+    <color name="colorSecondaryLight">#EBEBEB</color>
+    <color name="colorPrimaryDark">#C7C7C7</color>
+    <color name="colorAccent">#31A3E0</color>
+    <color name="colorFadeAccent">#A1D3F0</color>
     <color name="mainTextColor">#8097AC</color>
-    <color name="ic_launcher_background">#31A3E0</color>
+    <color name="fadeBlueText">#C1E3F5</color>
 </resources>
