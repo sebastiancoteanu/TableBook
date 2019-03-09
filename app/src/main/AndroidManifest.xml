@@ -34,14 +34,17 @@
             android:name=".activities.IntroActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait"
-            android:theme="@style/PrimaryFullScreenTheme">
-        </activity>
+            android:theme="@style/PrimaryFullScreenTheme" />
         <activity
             android:name=".activities.SigninActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait"
-            android:theme="@style/PrimaryFullScreenTheme">
-        </activity>
+            android:theme="@style/PrimaryFullScreenTheme" />
+        <activity
+            android:name=".activities.InfoConfirm"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
+            android:theme="@style/PrimaryFullScreenTheme" />
 
         <meta-data
             android:name="preloaded_fonts"

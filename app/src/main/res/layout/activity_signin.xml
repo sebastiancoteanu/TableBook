@@ -26,9 +26,9 @@
         android:layout_marginTop="8dp"
         android:background="@android:color/transparent"
         android:fontFamily="@font/quicksand"
-        android:text="Sign In"
+        android:text="@string/signin"
         android:textColor="@color/colorPrimaryLight"
-        android:textSize="32sp"
+        android:textSize="24sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/backIcon" />
 
@@ -43,7 +43,7 @@
         android:text="Email address"
         android:textAllCaps="true"
         android:textColor="@color/colorPrimaryLight"
-        android:textSize="16sp"
+        android:textSize="14sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView4" />
 
@@ -78,7 +78,7 @@
         android:text="Password"
         android:textAllCaps="true"
         android:textColor="@color/colorPrimaryLight"
-        android:textSize="16sp"
+        android:textSize="14sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/emailAddress" />
 
@@ -136,7 +136,7 @@
         android:layout_marginEnd="24dp"
         android:layout_weight="1"
         android:background="@drawable/filled_button"
-        android:onClick="signIn"
+        android:onClick="emailPassSignIn"
         android:text="@string/signin"
         android:textAllCaps="false"
         android:textColor="@drawable/filled_button_color"
@@ -144,6 +144,26 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView5" />
+
+    <Button
+        android:id="@+id/google_sign_in"
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="121dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="36dp"
+        android:layout_marginEnd="24dp"
+        android:layout_weight="1"
+        android:background="@drawable/filled_button"
+        android:drawableLeft="@drawable/ic_google_logo"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:text="Google"
+        android:textAllCaps="false"
+        android:textColor="@color/colorTextDark"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView7" />
 
     <View
         android:id="@+id/view2"
@@ -187,20 +207,6 @@
         app:layout_constraintStart_toEndOf="@+id/textView7"
         app:layout_constraintTop_toTopOf="@+id/textView7" />
 
-    <com.google.android.gms.common.SignInButton
-        android:id="@+id/sign_in_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="24dp"
-        app:buttonSize="icon_only"
-        app:colorScheme="light"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView7" />
-
     <TextView
         android:id="@+id/textView10"
         android:layout_width="wrap_content"
@@ -232,5 +238,19 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/textView10" />
+
+    <Button
+        android:id="@+id/button4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:onClick="signOut"
+        android:text="SIGNOUT"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/google_sign_in" />
 
 </android.support.constraint.ConstraintLayout>
