@@ -23,45 +23,15 @@ public class IntroActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_intro);
-
-        firestoreDb = FirebaseFirestore.getInstance();
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-
-        // Check if user is signed in (non-null) and registered then update UI accordingly.
-        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-
-        if(currentUser != null) {
-            // user is signed in with google
-            firestoreDb
-                .collection("users").document(currentUser.getUid())
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        if (task.isSuccessful()) {
-                            // user is registered in database
-                            DocumentSnapshot document = task.getResult();
-                            if(document.exists()) {
-                                goToMainScreen();
-                            }
-                        }
-                    }
-                });
-        }
-    }
-
-    private void goToMainScreen() {
-        Intent intent = new Intent(this, MainActivity.class);
-        finish();
-        startActivity(intent);
     }
 
     public void switchSignIn(View v) {
         Intent intent = new Intent(this, SigninActivity.class);
+        startActivity(intent);
+    }
+
+    public void switchSignUp(View v) {
+        Intent intent = new Intent(this, SignupActivity.class);
         startActivity(intent);
     }
 }

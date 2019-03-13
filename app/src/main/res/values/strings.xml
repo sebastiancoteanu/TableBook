@@ -4,6 +4,6 @@
     <string name="welcome">Welcome</string>
     <string name="app_logo">Application logo</string>
     <string name="app_info">Gather your friends and book a table at the fanciest place in your town.</string>
-    <string name="signup">Signup</string>
+    <string name="signup">Sign Up</string>
     <string name="signin">Sign In</string>
 </resources>

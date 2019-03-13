@@ -102,14 +102,13 @@ public class SigninActivity extends AppCompatActivity {
     private void configureUI() {
         createListeners();
         createEmailWatcher();
-        createPasswrodWatcher();
+        createPasswordWatcher();
     }
 
     private void createListeners() {
         final ImageView passIcon = findViewById(R.id.passIcon);
         final EditText passwordInput = findViewById(R.id.password);
         ImageView backButton =  findViewById(R.id.backIcon);
-        Button googleButton = findViewById(R.id.googleSignIn);
 
         passIcon.setOnClickListener(new ImageView.OnClickListener() {
             public void onClick(View v) {
@@ -132,20 +131,31 @@ public class SigninActivity extends AppCompatActivity {
     }
 
     public void emailPassSignIn(View v) {
-        String emailInputString = ((EditText)findViewById(R.id.lastName)).getText().toString();
-//        TextView errorText = findViewById(R.id.errorText);
+        String emailAddress = ((EditText)findViewById(R.id.lastName)).getText().toString();
+        String password = ((EditText)findViewById(R.id.password)).getText().toString();
 
-        if(!isValidEmail(emailInputString)) {
-//            errorText.setText("Please enter a valid email");
+        if(!isValidEmail(emailAddress)) {
             Toast.makeText(SigninActivity.this, "Mail invalid",
                     Toast.LENGTH_LONG).show();
             return;
         }
 
-        Intent intent = new Intent(this, InfoConfirm.class);
-        startActivity(intent);
-
-        // log worked
+        mAuth.signInWithEmailAndPassword(emailAddress, password)
+            .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                @Override
+                public void onComplete(@NonNull Task<AuthResult> task) {
+                    if (task.isSuccessful()) {
+                        // Sign in success, update UI with the signed-in user's information
+                        FirebaseUser user = mAuth.getCurrentUser();
+                        updateUI(user);
+                    } else {
+                        // If sign in fails, display a message to the user.
+                        Toast.makeText(SigninActivity.this, task.getException().getMessage(),
+                                Toast.LENGTH_SHORT).show();
+                        updateUI(null);
+                    }
+                }
+            });
     }
 
     public void googleSignIn(View v) {
@@ -183,7 +193,7 @@ public class SigninActivity extends AppCompatActivity {
         });
     }
 
-    private void createPasswrodWatcher() {
+    private void createPasswordWatcher() {
         EditText passwordInput = findViewById(R.id.password);
 
         checkEmptyString(); // initial validation
@@ -212,5 +222,10 @@ public class SigninActivity extends AppCompatActivity {
         } else {
             signInButton.setEnabled(true);
         }
+    }
+
+    public void goToSignUp(View v) {
+        Intent intent = new Intent(this, SignupActivity.class);
+        startActivity(intent);
     }
 }

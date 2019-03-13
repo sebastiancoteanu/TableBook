@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -14,7 +13,6 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.sebas.licenta1.R;
 
@@ -53,11 +51,14 @@ public class InfoConfirm extends AppCompatActivity {
 
     private void setDataInFields() {
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-
+        String firstName = "";
+        String lastName = "";
         String email = firebaseUser.getEmail();
         String displayedName = firebaseUser.getDisplayName();
-        String firstName = displayedName.substring(0, displayedName.lastIndexOf(" "));
-        String lastName = displayedName.substring(displayedName.lastIndexOf(" ") + 1);
+        if(displayedName != null) {
+            firstName = displayedName.substring(0, displayedName.lastIndexOf(" "));
+            lastName = displayedName.substring(displayedName.lastIndexOf(" ") + 1);
+        }
 
         emailText.setText(email);
         firstNameText.setText(firstName);

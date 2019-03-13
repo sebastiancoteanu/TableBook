@@ -65,6 +65,7 @@
         android:layout_marginBottom="@dimen/spacing_large"
         android:layout_weight="1"
         android:background="@drawable/dashed_button"
+        android:onClick="switchSignUp"
         android:text="@string/signup"
         android:textAllCaps="false"
         android:textColor="@color/colorPrimaryLight"
