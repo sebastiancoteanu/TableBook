@@ -48,7 +48,7 @@
         app:layout_constraintTop_toBottomOf="@+id/textView4">
 
         <TextView
-            android:id="@+id/textView6"
+            android:id="@+id/firstNameLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@android:color/transparent"
@@ -61,20 +61,19 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <EditText
-            android:id="@+id/emailAddress"
+            android:id="@+id/firstName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/light_border"
             android:ems="10"
             android:fontFamily="@font/quicksand"
-            android:inputType="textEmailAddress"
             android:paddingBottom="6dp"
-            android:textAllCaps="true"
+            android:textAllCaps="false"
             android:textColor="@color/colorPrimaryLight"
             android:textCursorDrawable="@null"
             android:textSize="24sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView6" />
+            app:layout_constraintTop_toBottomOf="@+id/firstNameLabel" />
 
     </android.support.constraint.ConstraintLayout>
 
@@ -93,7 +92,7 @@
         app:layout_constraintTop_toBottomOf="@+id/textView4">
 
         <TextView
-            android:id="@+id/textView6"
+            android:id="@+id/lastNameLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@android:color/transparent"
@@ -106,25 +105,24 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <EditText
-            android:id="@+id/emailAddress"
+            android:id="@+id/lastName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/light_border"
             android:ems="10"
             android:fontFamily="@font/quicksand"
-            android:inputType="textEmailAddress"
             android:paddingBottom="6dp"
-            android:textAllCaps="true"
+            android:textAllCaps="false"
             android:textColor="@color/colorPrimaryLight"
             android:textCursorDrawable="@null"
             android:textSize="24sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView6" />
+            app:layout_constraintTop_toBottomOf="@+id/lastNameLabel" />
 
     </android.support.constraint.ConstraintLayout>
 
     <TextView
-        android:id="@+id/textView13"
+        android:id="@+id/emailAddressLabel"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:layout_marginStart="24dp"
@@ -139,7 +137,7 @@
         app:layout_constraintTop_toBottomOf="@+id/constraintLayout4" />
 
     <EditText
-        android:id="@+id/emailAddress4"
+        android:id="@+id/emailAddress"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
@@ -150,14 +148,14 @@
         android:fontFamily="@font/quicksand"
         android:inputType="textEmailAddress"
         android:paddingBottom="6dp"
-        android:textAllCaps="true"
+        android:textAllCaps="false"
         android:textColor="@color/colorPrimaryLight"
         android:textCursorDrawable="@null"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.179"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView13" />
+        app:layout_constraintTop_toBottomOf="@+id/emailAddressLabel" />
 
     <ImageButton
         android:id="@+id/imageButton"

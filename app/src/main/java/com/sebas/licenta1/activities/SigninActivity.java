@@ -30,7 +30,7 @@ import com.google.firebase.auth.GoogleAuthProvider;
 import com.sebas.licenta1.BuildConfig;
 import com.sebas.licenta1.R;
 
-public class SigninActivity extends AppCompatActivity implements View.OnClickListener{
+public class SigninActivity extends AppCompatActivity {
 
     private boolean passHidden = true;
     private GoogleSignInClient mGoogleSignInClient;
@@ -57,8 +57,6 @@ public class SigninActivity extends AppCompatActivity implements View.OnClickLis
 
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
         mAuth = FirebaseAuth.getInstance();
-
-        findViewById(R.id.google_sign_in).setOnClickListener(this);
     }
 
     @Override
@@ -69,24 +67,6 @@ public class SigninActivity extends AppCompatActivity implements View.OnClickLis
         if (requestCode == RC_SIGN_IN) {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             handleSignInResult(task);
-        }
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        // Check if user is signed in (non-null) and update UI accordingly.
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        updateUI(currentUser);
-    }
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.google_sign_in:
-                googleSignIn();
-                break;
-            // ...
         }
     }
 
@@ -101,22 +81,18 @@ public class SigninActivity extends AppCompatActivity implements View.OnClickLis
         }
     }
 
-    private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
-        Log.d(TAG, "firebaseAuthWithGoogle:" + acct.getId());
+    private void firebaseAuthWithGoogle(GoogleSignInAccount account) {
+        Log.d(TAG, "firebaseAuthWithGoogle:" + account.getId());
 
-        AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
+        AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d(TAG, "signInWithCredential:success");
                             FirebaseUser user = mAuth.getCurrentUser();
                             updateUI(user);
                         } else {
-                            // If sign in fails, display a message to the user.
-                            Log.w(TAG, "signInWithCredential:failure", task.getException());
                             updateUI(null);
                         }
                     }
@@ -133,6 +109,7 @@ public class SigninActivity extends AppCompatActivity implements View.OnClickLis
         final ImageView passIcon = findViewById(R.id.passIcon);
         final EditText passwordInput = findViewById(R.id.password);
         ImageView backButton =  findViewById(R.id.backIcon);
+        Button googleButton = findViewById(R.id.googleSignIn);
 
         passIcon.setOnClickListener(new ImageView.OnClickListener() {
             public void onClick(View v) {
@@ -155,7 +132,7 @@ public class SigninActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     public void emailPassSignIn(View v) {
-        String emailInputString = ((EditText)findViewById(R.id.emailAddress)).getText().toString();
+        String emailInputString = ((EditText)findViewById(R.id.lastName)).getText().toString();
 //        TextView errorText = findViewById(R.id.errorText);
 
         if(!isValidEmail(emailInputString)) {
@@ -171,30 +148,15 @@ public class SigninActivity extends AppCompatActivity implements View.OnClickLis
         // log worked
     }
 
-    public void googleSignIn() {
+    public void googleSignIn(View v) {
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
-    public void signOut(View v) {
-        // Firebase sign out
-        mAuth.signOut();
-
-        // Google sign out
-        mGoogleSignInClient.signOut().addOnCompleteListener(this,
-                new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        updateUI(null);
-                    }
-                });
-    }
-
     private void updateUI(FirebaseUser user) {
         if (user != null) {
-
-        } else {
-
+            Intent intent = new Intent(this, InfoConfirm.class);
+            startActivity(intent);
         }
     }
 
@@ -203,7 +165,7 @@ public class SigninActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     private void createEmailWatcher() {
-        EditText emailInput = findViewById(R.id.emailAddress);
+        EditText emailInput = findViewById(R.id.lastName);
 
         checkEmptyString(); // initial validation
 
@@ -242,7 +204,7 @@ public class SigninActivity extends AppCompatActivity implements View.OnClickLis
 
     private void checkEmptyString() {
         Button signInButton = findViewById(R.id.signIn);
-        String email = ((EditText) findViewById(R.id.emailAddress)).getText().toString();
+        String email = ((EditText) findViewById(R.id.lastName)).getText().toString();
         String password = ((EditText) findViewById(R.id.password)).getText().toString();
 
         if(email.trim().length() == 0 || password.trim().length() == 0){
