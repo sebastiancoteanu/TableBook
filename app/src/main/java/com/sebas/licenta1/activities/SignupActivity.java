@@ -132,7 +132,7 @@ public class SignupActivity extends AppCompatActivity {
         String password = ((EditText)findViewById(R.id.password)).getText().toString();
 
         if(!isValidEmail(emailAddress)) {
-            Toast.makeText(SignupActivity.this, "Mail invalid",
+            Toast.makeText(SignupActivity.this, "Invalid email",
                     Toast.LENGTH_LONG).show();
             return;
         }

@@ -128,6 +128,8 @@ public class SigninActivity extends AppCompatActivity {
                 finish();
             }
         });
+
+
     }
 
     public void emailPassSignIn(View v) {
@@ -135,7 +137,7 @@ public class SigninActivity extends AppCompatActivity {
         String password = ((EditText)findViewById(R.id.password)).getText().toString();
 
         if(!isValidEmail(emailAddress)) {
-            Toast.makeText(SigninActivity.this, "Mail invalid",
+            Toast.makeText(SigninActivity.this, "Invalid email",
                     Toast.LENGTH_LONG).show();
             return;
         }
@@ -226,6 +228,11 @@ public class SigninActivity extends AppCompatActivity {
 
     public void goToSignUp(View v) {
         Intent intent = new Intent(this, SignupActivity.class);
+        startActivity(intent);
+    }
+
+    public void goToForgotPassword(View v) {
+        Intent intent = new Intent(this, ForgotPasswordActivity.class);
         startActivity(intent);
     }
 }
