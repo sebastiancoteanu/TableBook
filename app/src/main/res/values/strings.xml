@@ -6,4 +6,17 @@
     <string name="app_info">Gather your friends and book a table at the fanciest place in your town.</string>
     <string name="signup">Sign Up</string>
     <string name="signin">Sign In</string>
+    <string name="emailAddressLabel">Email Address</string>
+    <string name="passwordLabel">Password</string>
+    <string name="forgotPassword">Forgot Password ?</string>
+    <string name="connectWithHint">Or connect with</string>
+    <string name="googleButtonText">Google</string>
+    <string name="dontHaveAccount">Don\'t have an account ?</string>
+    <string name="goBack">Go Back</string>
+    <string name="togglePassword">View/Hide password</string>
+    <string name="already_have_an_account">Already have an account ?</string>
+    <string name="last_name">Last Name</string>
+    <string name="first_name">First Name</string>
+    <string name="confirm_your_information">Confirm your information</string>
+    <string name="proceed">Proceed</string>
 </resources>

@@ -13,6 +13,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -37,6 +38,13 @@ public class SigninActivity extends AppCompatActivity {
     private static final int RC_SIGN_IN = 9001;
     private static final String TAG = "GoogleActivity";
     private FirebaseAuth mAuth;
+
+    private ImageView passIcon;
+    private EditText passwordInput;
+    private EditText emailInput;
+    private ImageView backButton;
+    private TextView forgotPassword;
+    private TextView signup;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,16 +108,22 @@ public class SigninActivity extends AppCompatActivity {
     }
 
     private void configureUI() {
+        defineView();
         createListeners();
         createEmailWatcher();
         createPasswordWatcher();
     }
 
-    private void createListeners() {
-        final ImageView passIcon = findViewById(R.id.passIcon);
-        final EditText passwordInput = findViewById(R.id.password);
-        ImageView backButton =  findViewById(R.id.backIcon);
+    private void defineView() {
+        passIcon = findViewById(R.id.passIcon);
+        passwordInput = findViewById(R.id.password);
+        emailInput = findViewById(R.id.emailAddress);
+        backButton =  findViewById(R.id.backIcon);
+        forgotPassword = findViewById(R.id.forgotPassword);
+        signup = findViewById(R.id.signup);
+    }
 
+    private void createListeners() {
         passIcon.setOnClickListener(new ImageView.OnClickListener() {
             public void onClick(View v) {
                 passHidden = !passHidden;
@@ -129,40 +143,17 @@ public class SigninActivity extends AppCompatActivity {
             }
         });
 
+        forgotPassword.setOnClickListener(new TextView.OnClickListener() {
+            public void onClick(View v) {
+                switchActivity(ForgotPasswordActivity.class, false);
+            }
+        });
 
-    }
-
-    public void emailPassSignIn(View v) {
-        String emailAddress = ((EditText)findViewById(R.id.lastName)).getText().toString();
-        String password = ((EditText)findViewById(R.id.password)).getText().toString();
-
-        if(!isValidEmail(emailAddress)) {
-            Toast.makeText(SigninActivity.this, "Invalid email",
-                    Toast.LENGTH_LONG).show();
-            return;
-        }
-
-        mAuth.signInWithEmailAndPassword(emailAddress, password)
-            .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                @Override
-                public void onComplete(@NonNull Task<AuthResult> task) {
-                    if (task.isSuccessful()) {
-                        // Sign in success, update UI with the signed-in user's information
-                        FirebaseUser user = mAuth.getCurrentUser();
-                        updateUI(user);
-                    } else {
-                        // If sign in fails, display a message to the user.
-                        Toast.makeText(SigninActivity.this, task.getException().getMessage(),
-                                Toast.LENGTH_SHORT).show();
-                        updateUI(null);
-                    }
-                }
-            });
-    }
-
-    public void googleSignIn(View v) {
-        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
-        startActivityForResult(signInIntent, RC_SIGN_IN);
+        signup.setOnClickListener(new TextView.OnClickListener() {
+            public void onClick(View v) {
+                switchActivity(SignupActivity.class, false);
+            }
+        });
     }
 
     private void updateUI(FirebaseUser user) {
@@ -177,8 +168,6 @@ public class SigninActivity extends AppCompatActivity {
     }
 
     private void createEmailWatcher() {
-        EditText emailInput = findViewById(R.id.lastName);
-
         checkEmptyString(); // initial validation
 
         emailInput.addTextChangedListener(new TextWatcher() {
@@ -196,8 +185,6 @@ public class SigninActivity extends AppCompatActivity {
     }
 
     private void createPasswordWatcher() {
-        EditText passwordInput = findViewById(R.id.password);
-
         checkEmptyString(); // initial validation
 
         passwordInput.addTextChangedListener(new TextWatcher() {
@@ -216,8 +203,8 @@ public class SigninActivity extends AppCompatActivity {
 
     private void checkEmptyString() {
         Button signInButton = findViewById(R.id.signIn);
-        String email = ((EditText) findViewById(R.id.lastName)).getText().toString();
-        String password = ((EditText) findViewById(R.id.password)).getText().toString();
+        String email = emailInput.getText().toString();
+        String password = passwordInput.getText().toString();
 
         if(email.trim().length() == 0 || password.trim().length() == 0){
             signInButton.setEnabled(false);
@@ -234,5 +221,46 @@ public class SigninActivity extends AppCompatActivity {
     public void goToForgotPassword(View v) {
         Intent intent = new Intent(this, ForgotPasswordActivity.class);
         startActivity(intent);
+    }
+
+    private void switchActivity(Class c, Boolean closeCurrent) {
+        Intent intent = new Intent(this, c);
+        if(closeCurrent) {
+            finish();
+        }
+        startActivity(intent);
+    }
+
+    public void googleSignIn(View v) {
+        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+        startActivityForResult(signInIntent, RC_SIGN_IN);
+    }
+
+    public void emailPassSignIn(View v) {
+        String emailAddress = emailInput.getText().toString();
+        String password = passwordInput.getText().toString();
+
+        if(!isValidEmail(emailAddress)) {
+            Toast.makeText(SigninActivity.this, "Invalid email",
+                    Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        mAuth.signInWithEmailAndPassword(emailAddress, password)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            updateUI(user);
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Toast.makeText(SigninActivity.this, task.getException().getMessage(),
+                                    Toast.LENGTH_SHORT).show();
+                            updateUI(null);
+                        }
+                    }
+                });
     }
 }

@@ -76,6 +76,12 @@ public class InfoConfirm extends AppCompatActivity {
         });
     }
 
+    private void goToMainScreen() {
+        Intent intent = new Intent(this, MainActivity.class);
+        finish();
+        startActivity(intent);
+    }
+
     public void confirmInfo(View v) {
         String firstName = firstNameText.getText().toString();
         String lastName = lastNameText.getText().toString();
@@ -88,27 +94,21 @@ public class InfoConfirm extends AppCompatActivity {
         user.put("emailAddress", emailAddress);
 
         firestoreDb
-                .collection("users")
-                .document(id)
-                .set(user)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        goToMainScreen();
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w("Error", e.getMessage());
-                    }
-                });
-    }
-
-    private void goToMainScreen() {
-        Intent intent = new Intent(this, MainActivity.class);
-        finish();
-        startActivity(intent);
+            .collection("users")
+            .document(id)
+            .set(user)
+            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    goToMainScreen();
+                }
+            })
+            .addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.w("Error", e.getMessage());
+                }
+            });
     }
 
 }

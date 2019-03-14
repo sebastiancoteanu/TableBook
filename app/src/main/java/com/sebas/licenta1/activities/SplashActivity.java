@@ -1,5 +1,6 @@
 package com.sebas.licenta1.activities;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -44,27 +45,23 @@ public class SplashActivity extends AppCompatActivity {
                             // user is registered in database
                             DocumentSnapshot document = task.getResult();
                             if(document.exists()) {
-                                goToMainScreen();
+                                switchActivity(MainActivity.class, true);
                                 return;
                             }
                         }
-                        goToIntroScreen();
+                        switchActivity(IntroActivity.class, true);
                     }
                 });
         } else {
-            goToIntroScreen();
+            switchActivity(IntroActivity.class, true);
         }
     }
 
-    private void goToIntroScreen() {
-        Intent intent = new Intent(this, IntroActivity.class);
-        finish();
-        startActivity(intent);
-    }
-
-    private void goToMainScreen() {
-        Intent intent = new Intent(this, MainActivity.class);
-        finish();
+    private void switchActivity(Class c, Boolean closeCurrent) {
+        Intent intent = new Intent(this, c);
+        if(closeCurrent) {
+            finish();
+        }
         startActivity(intent);
     }
 }

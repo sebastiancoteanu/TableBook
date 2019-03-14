@@ -51,29 +51,6 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         backIcon = findViewById(R.id.backIcon);
     }
 
-    public void sendVerificationLink(View v) {
-        String emailString = emailAddress.getText().toString();
-        if(!isValidEmail(emailString)) {
-            Toast.makeText(ForgotPasswordActivity.this, "Invalid email",
-                    Toast.LENGTH_LONG).show();
-            return;
-        }
-
-        firebaseAuth.sendPasswordResetEmail(emailString)
-            .addOnCompleteListener(new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(@NonNull Task<Void> task) {
-                    if(task.isSuccessful()) {
-                        Toast.makeText(ForgotPasswordActivity.this, "Please, check your email",
-                                Toast.LENGTH_LONG).show();
-                    } else {
-                        Toast.makeText(ForgotPasswordActivity.this, getMessage((FirebaseAuthException) task.getException()),
-                                Toast.LENGTH_LONG).show();
-                    }
-                }
-            });
-    }
-
     private Boolean isValidEmail(String email){
         return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
@@ -85,5 +62,28 @@ public class ForgotPasswordActivity extends AppCompatActivity {
             default:
                 return fae.getLocalizedMessage();
         }
+    }
+
+    public void sendVerificationLink(View v) {
+        String emailString = emailAddress.getText().toString();
+        if(!isValidEmail(emailString)) {
+            Toast.makeText(ForgotPasswordActivity.this, "Invalid email",
+                    Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        firebaseAuth.sendPasswordResetEmail(emailString)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if(task.isSuccessful()) {
+                            Toast.makeText(ForgotPasswordActivity.this, "Please, check your email",
+                                    Toast.LENGTH_LONG).show();
+                        } else {
+                            Toast.makeText(ForgotPasswordActivity.this, getMessage((FirebaseAuthException) task.getException()),
+                                    Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
     }
 }

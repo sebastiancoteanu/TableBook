@@ -24,6 +24,8 @@ public class SignupActivity extends AppCompatActivity {
 
     private boolean passHidden = true;
     private FirebaseAuth mAuth;
+    private EditText passwordInput;
+    private EditText emailInput;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,14 +38,19 @@ public class SignupActivity extends AppCompatActivity {
     }
 
     private void configureUI() {
+        defineView();
         createListeners();
         createEmailWatcher();
         createPasswordWatcher();
     }
 
+    private void defineView() {
+        passwordInput = findViewById(R.id.password);
+        emailInput = findViewById(R.id.emailAddress);
+    }
+
     private void createListeners() {
         final ImageView passIcon = findViewById(R.id.passIcon);
-        final EditText passwordInput = findViewById(R.id.password);
         ImageView backButton =  findViewById(R.id.backIcon);
 
         passIcon.setOnClickListener(new ImageView.OnClickListener() {
@@ -67,8 +74,6 @@ public class SignupActivity extends AppCompatActivity {
     }
 
     private void createEmailWatcher() {
-        EditText emailInput = findViewById(R.id.lastName);
-
         checkEmptyString(); // initial validation
 
         emailInput.addTextChangedListener(new TextWatcher() {
@@ -86,8 +91,6 @@ public class SignupActivity extends AppCompatActivity {
     }
 
     private void createPasswordWatcher() {
-        EditText passwordInput = findViewById(R.id.password);
-
         checkEmptyString(); // initial validation
 
         passwordInput.addTextChangedListener(new TextWatcher() {
@@ -106,8 +109,8 @@ public class SignupActivity extends AppCompatActivity {
 
     private void checkEmptyString() {
         Button signInButton = findViewById(R.id.signIn);
-        String email = ((EditText) findViewById(R.id.lastName)).getText().toString();
-        String password = ((EditText) findViewById(R.id.password)).getText().toString();
+        String email = emailInput.getText().toString();
+        String password = passwordInput.getText().toString();
 
         if(email.trim().length() == 0 || password.trim().length() == 0){
             signInButton.setEnabled(false);
@@ -128,8 +131,8 @@ public class SignupActivity extends AppCompatActivity {
     }
 
     public void emailPassSignUp(View v) {
-        String emailAddress = ((EditText)findViewById(R.id.lastName)).getText().toString();
-        String password = ((EditText)findViewById(R.id.password)).getText().toString();
+        String emailAddress = emailInput.getText().toString();
+        String password = passwordInput.getText().toString();
 
         if(!isValidEmail(emailAddress)) {
             Toast.makeText(SignupActivity.this, "Invalid email",

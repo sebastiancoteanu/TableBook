@@ -14,6 +14,7 @@
         android:layout_marginStart="24dp"
         android:layout_marginTop="24dp"
         android:background="@android:color/transparent"
+        android:contentDescription="@string/goBack"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_arrow_back_black_24dp" />
@@ -40,7 +41,8 @@
         android:layout_marginTop="40dp"
         android:background="@android:color/transparent"
         android:fontFamily="@font/quicksand"
-        android:text="Email address"
+        android:labelFor="@+id/emailAddress"
+        android:text="@string/emailAddressLabel"
         android:textAllCaps="true"
         android:textColor="@color/colorPrimaryLight"
         android:textSize="14sp"
@@ -48,7 +50,7 @@
         app:layout_constraintTop_toBottomOf="@+id/textView4" />
 
     <EditText
-        android:id="@+id/lastName"
+        android:id="@+id/emailAddress"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
@@ -65,7 +67,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView6" />
+        app:layout_constraintTop_toBottomOf="@+id/textView6"
+        android:autofillHints="" />
 
     <TextView
         android:id="@+id/textView2"
@@ -75,12 +78,13 @@
         android:layout_marginTop="32dp"
         android:background="@android:color/transparent"
         android:fontFamily="@font/quicksand"
-        android:text="Password"
+        android:labelFor="@+id/password"
+        android:text="@string/passwordLabel"
         android:textAllCaps="true"
         android:textColor="@color/colorPrimaryLight"
         android:textSize="14sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/lastName" />
+        app:layout_constraintTop_toBottomOf="@+id/emailAddress" />
 
     <EditText
         android:id="@+id/password"
@@ -100,7 +104,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView2" />
+        app:layout_constraintTop_toBottomOf="@+id/textView2"
+        android:autofillHints="" />
 
     <ImageView
         android:id="@+id/passIcon"
@@ -108,6 +113,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="24dp"
         android:background="@android:color/transparent"
+        android:contentDescription="@string/togglePassword"
         app:layout_constraintBottom_toBottomOf="@+id/textView2"
         app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@drawable/ic_visibility_off_black_24dp" />
@@ -139,7 +145,7 @@
         android:layout_marginBottom="16dp"
         android:background="@android:color/transparent"
         android:fontFamily="@font/quicksand"
-        android:text="Already have an account ?"
+        android:text="@string/already_have_an_account"
         android:textColor="@color/fadeBlueText"
         android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="parent"
