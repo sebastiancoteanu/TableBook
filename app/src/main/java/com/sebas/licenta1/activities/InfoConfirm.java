@@ -86,12 +86,14 @@ public class InfoConfirm extends AppCompatActivity {
         String firstName = firstNameText.getText().toString();
         String lastName = lastNameText.getText().toString();
         String emailAddress = emailText.getText().toString();
+        String profileImgUrl = firebaseUser.getPhotoUrl().toString();
         String id = firebaseUser.getUid();
 
         Map<String, Object> user = new HashMap<>();
         user.put("firstName", firstName);
         user.put("lastName", lastName);
         user.put("emailAddress", emailAddress);
+        user.put("profileImgUrl", profileImgUrl);
 
         firestoreDb
             .collection("users")
