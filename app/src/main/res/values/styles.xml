@@ -8,7 +8,6 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:windowLightStatusBar">true</item>
         <item name="android:statusBarColor">@color/colorPrimaryLight</item>
-        <item name="android:background">@color/colorPrimaryLight</item>
         <item name="android:textColor">@color/colorTextDarker</item>
         <item name="android:textColorPrimary">@color/colorTextDarker</item>
         <item name="alertDialogTheme">@style/AlertDialogTheme</item>

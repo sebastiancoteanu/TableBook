@@ -1,8 +1,10 @@
 package com.sebas.licenta1.activities;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -12,12 +14,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -25,21 +31,26 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.auth.User;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.sebas.licenta1.BuildConfig;
 import com.sebas.licenta1.R;
-import com.sebas.licenta1.dao.AppUser;
-
-import static android.content.ContentValues.TAG;
+import com.sebas.licenta1.dto.AppUser;
 
 public class ProfileFragment extends Fragment implements View.OnClickListener {
     private GoogleSignInClient mGoogleSignInClient;
     private FirebaseAuth mAuth;
     private FirebaseUser firebaseUser;
     private FirebaseFirestore firestoreDb;
+    private StorageReference storageRef;
+    private StorageReference fileReference;
     private AppUser appUser;
     private ImageButton signOut;
     private DocumentReference usersRef;
+    private ImageView profilePicture;
+
+    private static final int GALLERY_REQUEST_CODE = 9000;
 
     @Nullable
     @Override
@@ -58,17 +69,85 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
             case R.id.signOutButton:
                 signOut();
                 break;
+            case R.id.profilePicture:
+                pickFromGallery();
+                break;
         }
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        defineUI(view);
         createListeners(view);
     }
 
-    private void createListeners(View v) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data){
+        // Result code is RESULT_OK only if the user selects an Image
+        if (resultCode == Activity.RESULT_OK)
+            switch (requestCode){
+                case GALLERY_REQUEST_CODE:
+                    finalizePhotoPick(data);
+                    break;
+            }
+    }
+
+    private void finalizePhotoPick(Intent data) {
+        Uri selectedImage = data.getData();
+        profilePicture.setImageURI(selectedImage);
+        dbPhotoUpload(selectedImage);
+    }
+
+    private void dbPhotoUpload(Uri imageUri) {
+        fileReference = storageRef.child(firebaseUser.getUid());
+        fileReference.putFile(imageUri)
+            .continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                @Override
+                public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                    if (!task.isSuccessful()) {
+                        throw task.getException();
+                    }
+                    return fileReference.getDownloadUrl();
+                }
+            })
+            .addOnCompleteListener(new OnCompleteListener<Uri>() {
+                @Override
+                public void onComplete(@NonNull Task<Uri> task) {
+                    if (task.isSuccessful()) {
+                        updateUser(task.getResult().toString());
+                    } else {
+                        Toast.makeText(getActivity(), "User update failed", Toast.LENGTH_LONG).show();
+                    }
+                }
+        });
+
+    }
+
+    private void updateUser(String profileImgUrl) {
+        appUser.setProfileImgUrl(profileImgUrl);
+        usersRef
+            .set(appUser)
+            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    Toast.makeText(getActivity(), "Database user update", Toast.LENGTH_LONG).show();
+                }
+            })
+            .addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_LONG).show();
+                }
+            });
+    }
+
+    private void defineUI(View v) {
         signOut = v.findViewById(R.id.signOutButton);
+        profilePicture = v.findViewById(R.id.profilePicture);
+    }
+
+    private void createListeners(View v) {
         signOut.setOnClickListener(this);
+        profilePicture.setOnClickListener(this);
 
         appUser = ((MainActivity) getActivity()).getAppUser();
         if(appUser != null) {
@@ -77,19 +156,28 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
             return;
         }
 
-        usersRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                appUser = documentSnapshot.toObject(AppUser.class);
-                if(appUser != null) {
-                    ((MainActivity) getActivity()).setAppUser(appUser);
-                    setDataInFields();
-                } else {
-                    Log.d("Error", "User object is empty.");
-                }
+        usersRef.get()
+            .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                @Override
+                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                    appUser = documentSnapshot.toObject(AppUser.class);
+                    if(appUser != null) {
+                        ((MainActivity) getActivity()).setAppUser(appUser);
+                        setDataInFields();
+                    } else {
+                        Log.d("Error", "User object is empty.");
+                    }
 
-            }
-        });
+                }
+            });
+    }
+
+    private void pickFromGallery() {
+        Intent intent = new Intent(Intent.ACTION_PICK);
+        intent.setType("image/*");
+        String[] mimeTypes = {"image/jpeg", "image/png"};
+        intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
+        startActivityForResult(intent, GALLERY_REQUEST_CODE);
     }
 
     private void setDataInFields() {
@@ -104,6 +192,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         firestoreDb = FirebaseFirestore.getInstance();
         firebaseUser = mAuth.getCurrentUser();
         usersRef = firestoreDb.collection("users").document(firebaseUser.getUid());
+        storageRef = FirebaseStorage.getInstance().getReference("profilePictures");
     }
 
     private void configureAuth() {

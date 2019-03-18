@@ -7,7 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
 import com.sebas.licenta1.R;
-import com.sebas.licenta1.dao.AppUser;
+import com.sebas.licenta1.dto.AppUser;
 
 public class MainActivity extends AppCompatActivity {
     private BottomNavigationView bottomNav;

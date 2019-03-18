@@ -41,6 +41,10 @@ dependencies {
         exclude group: 'com.android.support'
     }
 
+    implementation ('com.google.firebase:firebase-storage:16.0.5') {
+        exclude group: 'com.android.support'
+    }
+
     implementation('com.google.android.gms:play-services-auth:16.0.1') {
         exclude group: 'com.android.support'
     }

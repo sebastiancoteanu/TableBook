@@ -1,4 +1,4 @@
-package com.sebas.licenta1.dao;
+package com.sebas.licenta1.dto;
 
 public class AppUser {
     private String firstName;
