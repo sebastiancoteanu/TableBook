@@ -18,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -79,6 +80,31 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         defineUI(view);
         createListeners(view);
+        fetchUser();
+    }
+
+    private void fetchUser() {
+        appUser = ((MainActivity) getActivity()).getAppUser();
+        if(appUser != null) {
+            Log.d("Obiectul user:", appUser.toString());
+            setDataInFields();
+            return;
+        }
+
+        usersRef.get()
+            .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                @Override
+                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                    appUser = documentSnapshot.toObject(AppUser.class);
+                    if(appUser != null) {
+                        ((MainActivity) getActivity()).setAppUser(appUser);
+                        setDataInFields();
+                    } else {
+                        Log.d("Error", "User object is empty.");
+                    }
+
+                }
+            });
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data){
@@ -148,28 +174,6 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
     private void createListeners(View v) {
         signOut.setOnClickListener(this);
         profilePicture.setOnClickListener(this);
-
-        appUser = ((MainActivity) getActivity()).getAppUser();
-        if(appUser != null) {
-            Log.d("Obiectul user:", appUser.toString());
-            setDataInFields();
-            return;
-        }
-
-        usersRef.get()
-            .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                @Override
-                public void onSuccess(DocumentSnapshot documentSnapshot) {
-                    appUser = documentSnapshot.toObject(AppUser.class);
-                    if(appUser != null) {
-                        ((MainActivity) getActivity()).setAppUser(appUser);
-                        setDataInFields();
-                    } else {
-                        Log.d("Error", "User object is empty.");
-                    }
-
-                }
-            });
     }
 
     private void pickFromGallery() {
@@ -186,6 +190,10 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
 
         firstLastName.setText(appUser.getFullName());
         emailAddress.setText(appUser.getEmailAddress());
+
+        Glide.with(getView())
+                .load(appUser.getProfileImgUrl())
+                .into(profilePicture);
     }
 
     private void configureDb() {

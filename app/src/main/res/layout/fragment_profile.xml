@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimaryLight">
 
     <ImageButton
         android:id="@+id/signOutButton"
@@ -35,7 +36,7 @@
             android:layout_height="match_parent"
             android:background="@android:color/transparent"
             android:id="@+id/profilePicture"
-            android:src="@drawable/default_profile" />
+            android:src="@null" />
     </FrameLayout>
 
     <TextView
