@@ -2,8 +2,10 @@ package com.sebas.licenta1.activities;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -19,6 +21,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -50,6 +56,8 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
     private ImageButton signOut;
     private DocumentReference usersRef;
     private ImageView profilePicture;
+    private AlertDialog.Builder loadingBuilder;
+    private Dialog loadingDialog;
 
     private static final int GALLERY_REQUEST_CODE = 9000;
 
@@ -83,6 +91,11 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         fetchUser();
     }
 
+    private void showLoadingDialog() {
+        loadingDialog.show();
+        loadingDialog.getWindow().setLayout(400,400);
+    }
+
     private void fetchUser() {
         appUser = ((MainActivity) getActivity()).getAppUser();
         if(appUser != null) {
@@ -90,6 +103,8 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
             setDataInFields();
             return;
         }
+
+        showLoadingDialog();
 
         usersRef.get()
             .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -100,6 +115,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
                         ((MainActivity) getActivity()).setAppUser(appUser);
                         setDataInFields();
                     } else {
+                        loadingDialog.dismiss();
                         Log.d("Error", "User object is empty.");
                     }
 
@@ -119,17 +135,18 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
 
     private void finalizePhotoPick(Intent data) {
         Uri selectedImage = data.getData();
-        profilePicture.setImageURI(selectedImage);
         dbPhotoUpload(selectedImage);
     }
 
     private void dbPhotoUpload(Uri imageUri) {
         fileReference = storageRef.child(firebaseUser.getUid());
+        showLoadingDialog();
         fileReference.putFile(imageUri)
             .continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
                 @Override
                 public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
                     if (!task.isSuccessful()) {
+                        loadingDialog.dismiss();
                         throw task.getException();
                     }
                     return fileReference.getDownloadUrl();
@@ -142,10 +159,31 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
                         updateUser(task.getResult().toString());
                     } else {
                         Toast.makeText(getActivity(), "User update failed", Toast.LENGTH_LONG).show();
+                        loadingDialog.dismiss();
                     }
                 }
         });
 
+    }
+
+    private void loadGlidePhoto() {
+        Glide.with(getView())
+                .load(appUser.getProfileImgUrl())
+                .listener(new RequestListener<Drawable>() {
+                    @Override
+                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                        Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_LONG).show();
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                        loadingDialog.dismiss();
+                        return false;
+                    }
+                })
+                .thumbnail( 0.1f )
+                .into(profilePicture);
     }
 
     private void updateUser(String profileImgUrl) {
@@ -155,13 +193,14 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
             .addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
                 public void onSuccess(Void aVoid) {
-                    Toast.makeText(getActivity(), "Database user update", Toast.LENGTH_LONG).show();
+                    loadGlidePhoto();
                 }
             })
             .addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
                     Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_LONG).show();
+                    loadingDialog.dismiss();
                 }
             });
     }
@@ -169,6 +208,10 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
     private void defineUI(View v) {
         signOut = v.findViewById(R.id.signOutButton);
         profilePicture = v.findViewById(R.id.profilePicture);
+        loadingBuilder = new AlertDialog.Builder(getActivity(),  R.style.AlertDialogTheme);
+        loadingBuilder.setView(R.layout.dialog_loading);
+        loadingDialog = loadingBuilder.create();
+        loadingDialog.setCanceledOnTouchOutside(false);
     }
 
     private void createListeners(View v) {
@@ -191,9 +234,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         firstLastName.setText(appUser.getFullName());
         emailAddress.setText(appUser.getEmailAddress());
 
-        Glide.with(getView())
-                .load(appUser.getProfileImgUrl())
-                .into(profilePicture);
+        loadGlidePhoto();
     }
 
     private void configureDb() {
@@ -217,7 +258,8 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
 
     private void signOut() {
         // Firebase sign out
-        new AlertDialog.Builder(getActivity())
+
+        AlertDialog signOutDialog = new AlertDialog.Builder(getActivity(), R.style.AlertDialogTheme)
                 .setMessage("Are you sure you want to sign out?")
                 .setPositiveButton("Sign Out", new DialogInterface.OnClickListener() {
                     @Override
@@ -230,7 +272,11 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
                     public void onClick(DialogInterface dialog, int which) {
                         // negative statement
                     }
-                }).show();
+                }).create();
+
+        signOutDialog.show();
+        signOutDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getContext().getColor(R.color.colorAccent));
+        signOutDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getContext().getColor(R.color.colorAccent));
     }
 
     private void confirmSignOut() {

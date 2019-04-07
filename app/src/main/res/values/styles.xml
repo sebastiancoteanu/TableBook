@@ -4,13 +4,12 @@
     <style name="AppTheme" parent="Theme.MaterialComponents.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorTextDarker</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryLight</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:windowLightStatusBar">true</item>
         <item name="android:statusBarColor">@color/colorPrimaryLight</item>
         <item name="android:textColor">@color/colorTextDarker</item>
         <item name="android:textColorPrimary">@color/colorTextDarker</item>
-        <item name="alertDialogTheme">@style/AlertDialogTheme</item>
     </style>
 
     <style name="SplashTheme" parent="Theme.AppCompat.Light.NoActionBar">
@@ -56,9 +55,9 @@
 
     <!-- confirmation / alert dialog -->
     <style name="AlertDialogTheme" parent="Theme.AppCompat.Light.Dialog.Alert">
-        <item name="android:colorAccent">@color/colorTextDarker</item>
-        <item name="android:textColor">@color/colorTextDarker</item>
         <item name="android:textColorPrimary">@color/colorTextDarker</item>
+        <item name="colorPrimaryDark">@color/colorTextDarker</item>
+        <item name="colorAccent">@color/colorPrimaryLight</item>
     </style>
 
 </resources>
