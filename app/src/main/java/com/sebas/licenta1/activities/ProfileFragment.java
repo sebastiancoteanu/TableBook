@@ -44,6 +44,7 @@ import com.google.firebase.storage.UploadTask;
 import com.sebas.licenta1.BuildConfig;
 import com.sebas.licenta1.R;
 import com.sebas.licenta1.dto.AppUser;
+import com.sebas.licenta1.utils.LoadingDialog;
 
 public class ProfileFragment extends Fragment implements View.OnClickListener {
     private GoogleSignInClient mGoogleSignInClient;
@@ -56,8 +57,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
     private ImageButton signOut;
     private DocumentReference usersRef;
     private ImageView profilePicture;
-    private AlertDialog.Builder loadingBuilder;
-    private Dialog loadingDialog;
+    private LoadingDialog loadingDialog;
 
     private static final int GALLERY_REQUEST_CODE = 9000;
 
@@ -91,11 +91,6 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         fetchUser();
     }
 
-    private void showLoadingDialog() {
-        loadingDialog.show();
-        loadingDialog.getWindow().setLayout(400,400);
-    }
-
     private void fetchUser() {
         appUser = ((MainActivity) getActivity()).getAppUser();
         if(appUser != null) {
@@ -104,7 +99,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
             return;
         }
 
-        showLoadingDialog();
+        loadingDialog.show();
 
         usersRef.get()
             .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -140,7 +135,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
 
     private void dbPhotoUpload(Uri imageUri) {
         fileReference = storageRef.child(firebaseUser.getUid());
-        showLoadingDialog();
+        loadingDialog.show();
         fileReference.putFile(imageUri)
             .continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
                 @Override
@@ -208,10 +203,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
     private void defineUI(View v) {
         signOut = v.findViewById(R.id.signOutButton);
         profilePicture = v.findViewById(R.id.profilePicture);
-        loadingBuilder = new AlertDialog.Builder(getActivity(),  R.style.AlertDialogTheme);
-        loadingBuilder.setView(R.layout.dialog_loading);
-        loadingDialog = loadingBuilder.create();
-        loadingDialog.setCanceledOnTouchOutside(false);
+        loadingDialog = new LoadingDialog(getActivity());
     }
 
     private void createListeners(View v) {

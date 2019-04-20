@@ -1,5 +1,7 @@
 package com.sebas.licenta1.activities;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
@@ -16,6 +18,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.sebas.licenta1.R;
+import com.sebas.licenta1.utils.LoadingDialog;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,6 +27,7 @@ public class InfoConfirm extends AppCompatActivity {
     private EditText emailText;
     private EditText firstNameText;
     private EditText lastNameText;
+    private LoadingDialog loadingDialog;
 
     private FirebaseFirestore firestoreDb;
     private FirebaseUser firebaseUser;
@@ -48,6 +52,7 @@ public class InfoConfirm extends AppCompatActivity {
         emailText = findViewById(R.id.emailAddress);
         firstNameText = findViewById(R.id.firstName);
         lastNameText = findViewById(R.id.lastName);
+        loadingDialog = new LoadingDialog(this);
     }
 
     private void setDataInFields() {
@@ -96,6 +101,8 @@ public class InfoConfirm extends AppCompatActivity {
         user.put("emailAddress", emailAddress);
         user.put("profileImgUrl", profileImgUrl);
 
+        loadingDialog.show();
+
         firestoreDb
             .collection("users")
             .document(id)
@@ -103,12 +110,14 @@ public class InfoConfirm extends AppCompatActivity {
             .addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
                 public void onSuccess(Void aVoid) {
+                    loadingDialog.dismiss();
                     goToMainScreen();
                 }
             })
             .addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
+                    loadingDialog.dismiss();
                     Log.w("Error", e.getMessage());
                 }
             });

@@ -19,4 +19,9 @@
     <string name="first_name">First Name</string>
     <string name="confirm_your_information">Confirm your information</string>
     <string name="proceed">Proceed</string>
+    <string name="free">Free</string>
+    <string name="inexpensive">$</string>
+    <string name="moderate">$$</string>
+    <string name="expensive">$$$</string>
+    <string name="veryExpensive">$$$$</string>
 </resources>

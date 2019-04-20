@@ -1,5 +1,7 @@
 package com.sebas.licenta1.activities;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -30,6 +32,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.sebas.licenta1.BuildConfig;
 import com.sebas.licenta1.R;
+import com.sebas.licenta1.utils.LoadingDialog;
 
 public class SigninActivity extends AppCompatActivity {
 
@@ -45,6 +48,7 @@ public class SigninActivity extends AppCompatActivity {
     private ImageView backButton;
     private TextView forgotPassword;
     private TextView signup;
+    private LoadingDialog loadingDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,16 +95,18 @@ public class SigninActivity extends AppCompatActivity {
 
     private void firebaseAuthWithGoogle(GoogleSignInAccount account) {
         Log.d(TAG, "firebaseAuthWithGoogle:" + account.getId());
-
+        loadingDialog.show();
         AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
+                            loadingDialog.dismiss();
                             FirebaseUser user = mAuth.getCurrentUser();
                             updateUI(user);
                         } else {
+                            loadingDialog.dismiss();
                             updateUI(null);
                         }
                     }
@@ -121,6 +127,7 @@ public class SigninActivity extends AppCompatActivity {
         backButton =  findViewById(R.id.backIcon);
         forgotPassword = findViewById(R.id.forgotPassword);
         signup = findViewById(R.id.signup);
+        loadingDialog = new LoadingDialog(this);
     }
 
     private void createListeners() {

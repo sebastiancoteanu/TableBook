@@ -19,6 +19,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.sebas.licenta1.R;
+import com.sebas.licenta1.utils.LoadingDialog;
 
 public class SignupActivity extends AppCompatActivity {
 
@@ -26,6 +27,7 @@ public class SignupActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private EditText passwordInput;
     private EditText emailInput;
+    private LoadingDialog loadingDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +49,7 @@ public class SignupActivity extends AppCompatActivity {
     private void defineView() {
         passwordInput = findViewById(R.id.password);
         emailInput = findViewById(R.id.emailAddress);
+        loadingDialog = new LoadingDialog(this);
     }
 
     private void createListeners() {
@@ -140,16 +143,20 @@ public class SignupActivity extends AppCompatActivity {
             return;
         }
 
+        loadingDialog.show();
+
         mAuth.createUserWithEmailAndPassword(emailAddress, password)
             .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if (task.isSuccessful()) {
                         // Sign in success, update UI with the signed-in user's information
+                        loadingDialog.dismiss();
                         FirebaseUser user = mAuth.getCurrentUser();
                         updateUI(user);
                     } else {
                         // If sign in fails, display a message to the user.
+                        loadingDialog.dismiss();
                         Toast.makeText(SignupActivity.this, task.getException().getMessage(),
                                 Toast.LENGTH_SHORT).show();
                         updateUI(null);

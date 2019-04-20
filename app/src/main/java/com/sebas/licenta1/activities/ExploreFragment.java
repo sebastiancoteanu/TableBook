@@ -1,7 +1,7 @@
 package com.sebas.licenta1.activities;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -11,6 +11,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -25,6 +26,8 @@ import com.sebas.licenta1.BuildConfig;
 import com.sebas.licenta1.R;
 import com.sebas.licenta1.adapters.PlaceSummaryAdapter;
 import com.sebas.licenta1.dto.PlaceSummary;
+import com.sebas.licenta1.utils.EndlessRecyclerOnScrollListener;
+import com.sebas.licenta1.utils.LoadingDialog;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -39,8 +42,7 @@ public class ExploreFragment extends Fragment {
     private ArrayList<PlaceSummary> places = new ArrayList<PlaceSummary>();
     private RecyclerView placesRecycler;
     private RecyclerView.Adapter placesAdapter;
-    private AlertDialog.Builder loadingBuilder;
-    private Dialog loadingDialog;
+    private LoadingDialog loadingDialog;
 
     @Nullable
     @Override
@@ -55,34 +57,48 @@ public class ExploreFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         defineUI(view);
-        fetchPlaces(view);
+        configureRecycler();
     }
 
     private void configureRecycler() {
         placesRecycler = (getView()).findViewById(R.id.places);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
-        placesRecycler.setLayoutManager(mLayoutManager);
-        placesAdapter = new PlaceSummaryAdapter(places);
-        placesRecycler.setAdapter(placesAdapter);
-    }
 
-    private void showLoadingDialog() {
-        loadingDialog.show();
-        loadingDialog.getWindow().setLayout(400,400);
+        placesRecycler.setLayoutManager(mLayoutManager);
+        placesAdapter = new PlaceSummaryAdapter(places, new PlaceSummaryAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(PlaceSummary placeSummary) {
+                Intent intent = new Intent(getContext(), PlaceDetailsActivity.class);
+                intent.putExtra("googleData", placeSummary);
+                getContext().startActivity(intent);
+            }
+        });
+        placesRecycler.setAdapter(placesAdapter);
+        placesRecycler.setNestedScrollingEnabled(false);
+
+        /**
+         * fetch places only once at initialization then count on below listener
+         */
+        fetchPlaces(getContext());
+
+        placesRecycler.addOnScrollListener(new EndlessRecyclerOnScrollListener() {
+            @Override
+            public void onLoadMore() {
+                placesRecycler.stopScroll();
+                fetchPlaces(getContext());
+            }
+        });
     }
 
     private void defineUI(View v) {
         placesRecycler = v.findViewById(R.id.places);
-        loadingBuilder = new AlertDialog.Builder(getActivity(),  R.style.AlertDialogTheme);
-        loadingBuilder.setView(R.layout.dialog_loading);
-        loadingDialog = loadingBuilder.create();
-        loadingDialog.setCanceledOnTouchOutside(false);
+        loadingDialog = new LoadingDialog(getActivity());
     }
 
-    private void fetchPlaces(View v) {
+    private void fetchPlaces(Context context) {
         String requestUrl = placesBaseUrl + "44.429725,26.102877";
-        requestQueue = Volley.newRequestQueue(v.getContext());
-        showLoadingDialog();
+        requestQueue = Volley.newRequestQueue(context);
+        loadingDialog.show();
 
         jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, requestUrl, null,
                 new Response.Listener<JSONObject>() {
@@ -96,11 +112,18 @@ public class ExploreFragment extends Fragment {
                                 String name = place.getString("name");
                                 String placeId = place.getString("place_id");
                                 String vicinity = place.getString("vicinity");
+                                Float rating = Float.valueOf(place.getString("rating"));
+                                Integer ratingsNumber = place.getInt("user_ratings_total");
 
-                                PlaceSummary placeSummary = new PlaceSummary(placeId, name, vicinity);
+                                Integer priceLevel = -1;
+                                if(place.has("price_level")) {
+                                    priceLevel = place.getInt("price_level");
+                                }
+
+                                PlaceSummary placeSummary = new PlaceSummary(placeId, name, vicinity, rating, ratingsNumber, priceLevel);
                                 places.add(placeSummary);
                             }
-                            configureRecycler();
+                            placesAdapter.notifyDataSetChanged();
                             loadingDialog.dismiss();
                         } catch (JSONException e) {
                             e.printStackTrace();

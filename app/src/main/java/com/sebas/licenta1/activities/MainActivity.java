@@ -52,8 +52,14 @@ public class MainActivity extends AppCompatActivity {
     private void defineView() {
         bottomNav = findViewById(R.id.bottom_navigation);
         bottomNav.setOnNavigationItemSelectedListener(navListener);
+
+        Fragment defaultFragment = new ExploreFragment();
+        Bundle arguments = new Bundle();
+        arguments.putString("test", "o valoare");
+        defaultFragment.setArguments(arguments);
+
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                new ExploreFragment()).commit();
+                defaultFragment).commit();
     }
 
     public AppUser getAppUser() {
