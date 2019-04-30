@@ -1,10 +1,26 @@
 package com.sebas.licenta1.dto;
 
-public class AppUser {
+import java.io.Serializable;
+import java.util.ArrayList;
+
+public class AppUser implements Serializable {
     private String firstName;
     private String lastName;
     private String emailAddress;
     private String profileImgUrl;
+    private ArrayList<Reservation> reservations;
+
+    public AppUser() {
+
+    }
+
+    public AppUser(String firstName, String lastName, String emailAddress, String profileImgUrl, ArrayList<Reservation> reservations) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.emailAddress = emailAddress;
+        this.profileImgUrl = profileImgUrl;
+        this.reservations = reservations;
+    }
 
     public String getFirstName() {
         return firstName;
@@ -47,4 +63,11 @@ public class AppUser {
         return String.format(firstName + " " + lastName + " " + emailAddress);
     }
 
+    public ArrayList<Reservation> getReservations() {
+        return reservations;
+    }
+
+    public void setReservations(ArrayList<Reservation> reservations) {
+        this.reservations = reservations;
+    }
 }

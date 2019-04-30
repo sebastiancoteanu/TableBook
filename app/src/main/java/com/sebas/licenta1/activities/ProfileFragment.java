@@ -38,12 +38,14 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.auth.User;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.sebas.licenta1.BuildConfig;
 import com.sebas.licenta1.R;
 import com.sebas.licenta1.dto.AppUser;
+import com.sebas.licenta1.dto.UserDataHolder;
 import com.sebas.licenta1.utils.LoadingDialog;
 
 public class ProfileFragment extends Fragment implements View.OnClickListener {
@@ -86,36 +88,10 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        appUser = UserDataHolder.getInstance().getAppUser();
         defineUI(view);
         createListeners(view);
-        fetchUser();
-    }
-
-    private void fetchUser() {
-        appUser = ((MainActivity) getActivity()).getAppUser();
-        if(appUser != null) {
-            Log.d("Obiectul user:", appUser.toString());
-            setDataInFields();
-            return;
-        }
-
-        loadingDialog.show();
-
-        usersRef.get()
-            .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                @Override
-                public void onSuccess(DocumentSnapshot documentSnapshot) {
-                    appUser = documentSnapshot.toObject(AppUser.class);
-                    if(appUser != null) {
-                        ((MainActivity) getActivity()).setAppUser(appUser);
-                        setDataInFields();
-                    } else {
-                        loadingDialog.dismiss();
-                        Log.d("Error", "User object is empty.");
-                    }
-
-                }
-            });
+        setDataInFields();
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data){

@@ -3,7 +3,6 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.MaterialComponents.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryLight</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:windowLightStatusBar">true</item>
@@ -61,6 +60,19 @@
         <item name="android:textColorPrimary">@color/colorTextDarker</item>
         <item name="colorPrimaryDark">@color/colorTextDarker</item>
         <item name="colorAccent">@color/colorPrimaryLight</item>
+    </style>
+
+    <style name="PickerDialogTheme" parent="Theme.AppCompat.Light.Dialog">
+        <item name="android:textViewStyle">@style/DialogTextStyle</item>
+        <item name="colorAccent">@color/colorPrimaryLight</item>
+        <item name="android:colorPrimaryDark">@color/colorPrimaryLight</item>
+        <item name="android:colorAccent">@color/colorAccent</item>
+        <item name="android:textColorPrimaryInverse">@color/colorPrimaryLight</item>
+        <item name="android:colorControlActivated">@color/colorAccent</item>
+    </style>
+
+    <style name="DialogTextStyle" parent="android:Widget.TextView">
+        <item name="android:fontFamily">@font/quicksand</item>
     </style>
 
 </resources>

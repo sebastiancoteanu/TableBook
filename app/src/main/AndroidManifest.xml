@@ -15,10 +15,15 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".activities.PlaceDetailsActivity"
-            android:theme="@style/AppTheme"
+            android:name=".activities.CheckoutActivity"
             android:configChanges="orientation"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".activities.PlaceDetailsActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
         <activity
             android:name=".activities.ForgotPasswordActivity"
             android:configChanges="orientation"

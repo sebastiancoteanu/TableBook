@@ -1,6 +1,8 @@
 package com.sebas.licenta1.dto;
 
-public class Table {
+import java.io.Serializable;
+
+public class Table implements Serializable {
     private Integer seatsNo;
 
     public Table() {

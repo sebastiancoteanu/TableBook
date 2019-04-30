@@ -1,14 +1,17 @@
 package com.sebas.licenta1.activities;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -18,14 +21,17 @@ import com.sebas.licenta1.dto.PlaceDetails;
 import com.sebas.licenta1.dto.PlaceSummary;
 import com.sebas.licenta1.utils.LoadingDialog;
 
+import java.util.List;
+
 import javax.annotation.Nullable;
 
 public class PlaceDetailsActivity extends AppCompatActivity {
-    private PlacesClient placesClient;
     private CollectionReference placeRef;
     private FirebaseFirestore firestoreDb;
     private PlaceDetails placeDetails;
+    private PlaceSummary googleData;
     private LoadingDialog loadingDialog;
+    private Button bookButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,48 +39,49 @@ public class PlaceDetailsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_place_details);
 
         defineUI();
+        getIntentData();
         configureDb();
+        getPlaceById();
         createListeners();
     }
 
     private void configureDb() {
         firestoreDb = FirebaseFirestore.getInstance();
         placeRef = firestoreDb.collection("places");
+    }
+
+    private void getPlaceById() {
         loadingDialog.show();
 
         placeRef
-            .whereEqualTo("placeID", "ChIJt0sqxD__sUAR7gcIoiuNcvU")
+            .whereEqualTo("placeID", googleData.getPlaceId())
             .addSnapshotListener(new EventListener<QuerySnapshot>() {
                 @Override
                 public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
-                    placeDetails = queryDocumentSnapshots.getDocuments().get(0).toObject(PlaceDetails.class);
-                    setDataInView(placeDetails);
+                    List<DocumentSnapshot> documentSnapshots = queryDocumentSnapshots.getDocuments();
+
+                    if(documentSnapshots.size() != 0) {
+                        placeDetails = documentSnapshots.get(0).toObject(PlaceDetails.class);
+                    }
+
+                    setDataInView();
                     loadingDialog.dismiss();
                 }
             });
     }
 
-    private void setDataInView(PlaceDetails placeDetails) {
-        PlaceSummary googleData = (PlaceSummary) getIntent().getSerializableExtra("googleData");
-
-        String name = placeDetails.getName();
-        String address = placeDetails.getAddress();
-
-        if(name == null) {
-            name = googleData.getName();
+    private void setDataInView() {
+        if(placeDetails != null) {
+            ((TextView) findViewById(R.id.name)).setText(placeDetails.getName());
+            ((TextView) findViewById(R.id.address)).setText(placeDetails.getAddress());
+            ((TextView) findViewById(R.id.description)).setText(placeDetails.getDescription());
+            ((TextView) findViewById(R.id.ambientType)).setText(placeDetails.getAmbientType());
+            ((TextView) findViewById(R.id.foodType)).setText(placeDetails.getFoodType());
+            ((TextView) findViewById(R.id.preBooking)).setText(placeDetails.getPreBooking());
+        } else {
+            ((TextView) findViewById(R.id.name)).setText(googleData.getName());
+            ((TextView) findViewById(R.id.address)).setText(googleData.getVicinity());
         }
-        if(address == null) {
-            address = googleData.getVicinity();
-        }
-
-
-        ((TextView) findViewById(R.id.name)).setText(name);
-        ((TextView) findViewById(R.id.address)).setText(address);
-
-        ((TextView) findViewById(R.id.description)).setText(placeDetails.getDescription());
-        ((TextView) findViewById(R.id.ambientType)).setText(placeDetails.getAmbientType());
-        ((TextView) findViewById(R.id.foodType)).setText(placeDetails.getFoodType());
-        ((TextView) findViewById(R.id.preBooking)).setText(placeDetails.getPreBooking());
 
         String expensiveness = getExpensiveness(googleData.getPriceLevel());
         ((TextView) findViewById(R.id.expensiveness)).setText(expensiveness);
@@ -111,6 +118,7 @@ public class PlaceDetailsActivity extends AppCompatActivity {
 
     private void defineUI() {
         loadingDialog = new LoadingDialog(this);
+        bookButton = findViewById(R.id.book_button);
     }
 
     private void createListeners() {
@@ -121,5 +129,22 @@ public class PlaceDetailsActivity extends AppCompatActivity {
                 finish();
             }
         });
+
+        bookButton.setOnClickListener(new Button.OnClickListener() {
+            public void onClick(View v) {
+                if(placeDetails == null) {
+                    Toast.makeText(PlaceDetailsActivity.this, "Location not available",
+                            Toast.LENGTH_LONG).show();
+                    return;
+                }
+                Intent intent = new Intent(getApplicationContext(), CheckoutActivity.class);
+                intent.putExtra("placeDetails", placeDetails);
+                startActivity(intent);
+            }
+        });
+    }
+
+    private void getIntentData() {
+        googleData = (PlaceSummary) getIntent().getSerializableExtra("googleData");
     }
 }

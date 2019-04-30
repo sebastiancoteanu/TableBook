@@ -1,8 +1,9 @@
 package com.sebas.licenta1.dto;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class PlaceDetails {
+public class PlaceDetails implements Serializable {
     private String placeID;
     private String description;
     private String name;

@@ -35,8 +35,8 @@
                 android:id="@+id/backIcon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="24dp"
-                android:layout_marginTop="24dp"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="32dp"
                 android:background="@android:color/transparent"
                 android:contentDescription="@string/goBack"
                 app:layout_constraintStart_toStartOf="parent"
@@ -61,7 +61,8 @@
                     android:textSize="12sp"
                     android:textStyle="bold"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="Free booking" />
 
                 <TextView
                     android:id="@+id/name"
@@ -71,7 +72,8 @@
                     android:textSize="30sp"
                     android:textStyle="bold"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/preBooking" />
+                    app:layout_constraintTop_toBottomOf="@+id/preBooking"
+                    tools:text="La Mama" />
 
                 <TextView
                     android:id="@+id/address"
@@ -79,7 +81,8 @@
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/quicksand"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/name" />
+                    app:layout_constraintTop_toBottomOf="@+id/name"
+                    tools:text="Strada Bacani 1, Bucuresti" />
 
                 <View
                     android:id="@+id/divider1"
@@ -110,7 +113,8 @@
                     android:textStyle="bold"
                     app:layout_constraintBottom_toBottomOf="@+id/imageView5"
                     app:layout_constraintStart_toEndOf="@+id/imageView5"
-                    app:layout_constraintTop_toTopOf="@+id/imageView5" />
+                    app:layout_constraintTop_toTopOf="@+id/imageView5"
+                    tools:text="Familiy style" />
 
                 <TextView
                     android:id="@+id/foodType"
@@ -121,7 +125,8 @@
                     android:textStyle="bold"
                     app:layout_constraintBottom_toBottomOf="@+id/imageView6"
                     app:layout_constraintStart_toEndOf="@+id/imageView6"
-                    app:layout_constraintTop_toTopOf="@+id/imageView6" />
+                    app:layout_constraintTop_toTopOf="@+id/imageView6"
+                    tools:text="Traditional food" />
 
                 <ImageView
                     android:id="@+id/imageView6"
@@ -151,7 +156,8 @@
                     android:breakStrategy="simple"
                     android:fontFamily="@font/quicksand"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/divider2" />
+                    app:layout_constraintTop_toBottomOf="@+id/divider2"
+                    tools:text='La "La Mama", tinem pasul cu tendintele pietei si cerintele clientului modern, pentru ca totul s-a schimbat: mentalitatile, gusturile, obiceiurile de consum.' />
             </android.support.constraint.ConstraintLayout>
         </android.support.constraint.ConstraintLayout>
     </ScrollView>
@@ -171,7 +177,7 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <Button
-            android:id="@+id/button"
+            android:id="@+id/book_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -198,7 +204,8 @@
             android:textStyle="bold"
             app:layout_constraintBottom_toTopOf="@+id/ratingBar"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Moderate" />
 
         <RatingBar
             android:id="@+id/ratingBar"
@@ -226,7 +233,8 @@
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="@+id/ratingBar"
             app:layout_constraintStart_toEndOf="@+id/ratingBar"
-            app:layout_constraintTop_toTopOf="@+id/ratingBar" />
+            app:layout_constraintTop_toTopOf="@+id/ratingBar"
+            tools:text="1093" />
 
     </android.support.constraint.ConstraintLayout>
 
