@@ -3,6 +3,7 @@ package com.sebas.licenta1.activities;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -181,7 +182,7 @@ public class CheckoutActivity extends AppCompatActivity implements NumberPicker.
                     @Override
                     public void onSuccess(Void aVoid) {
                         loadingDialog.dismiss();
-                        Toast.makeText(getApplicationContext(), "Successful add reservation", Toast.LENGTH_LONG).show();
+                        goToSuccessfulScreen();
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -191,6 +192,12 @@ public class CheckoutActivity extends AppCompatActivity implements NumberPicker.
                         loadingDialog.dismiss();
                     }
                 });
+    }
+
+    private void goToSuccessfulScreen() {
+        Intent intent = new Intent(this, SuccessfulOrder.class);
+        finish();
+        startActivity(intent);
     }
 
     private void displaySeatsPicker() {
