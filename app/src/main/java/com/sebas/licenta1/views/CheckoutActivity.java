@@ -1,13 +1,15 @@
-package com.sebas.licenta1.activities;
+package com.sebas.licenta1.views;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -23,12 +25,13 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.sebas.licenta1.R;
-import com.sebas.licenta1.dto.AppUser;
-import com.sebas.licenta1.dto.PlaceDetails;
-import com.sebas.licenta1.dto.Reservation;
-import com.sebas.licenta1.dto.UserDataHolder;
+import com.sebas.licenta1.entities.AppUser;
+import com.sebas.licenta1.entities.PlaceDetails;
+import com.sebas.licenta1.entities.Reservation;
+import com.sebas.licenta1.entities.UserDataHolder;
 import com.sebas.licenta1.utils.LoadingDialog;
 import com.sebas.licenta1.utils.NumberPickerDialog;
+import com.sebas.licenta1.viewmodels.UserViewModel;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -50,6 +53,7 @@ public class CheckoutActivity extends AppCompatActivity implements NumberPicker.
     private AppUser appUser;
     private LocalDate localDate;
     private LocalTime localTime;
+    private UserViewModel userVm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,12 +61,13 @@ public class CheckoutActivity extends AppCompatActivity implements NumberPicker.
         setContentView(R.layout.activity_checkout);
 
 
-        appUser = UserDataHolder.getInstance().getAppUser();
+        userVm = ViewModelProviders.of(this).get(UserViewModel.class);
 
         getIntentData();
         defineUI();
         configureDb();
         createListeners();
+        fetchUser();
     }
 
     @Override
@@ -70,6 +75,19 @@ public class CheckoutActivity extends AppCompatActivity implements NumberPicker.
         numberPickerDialog.dismiss();
         reservation.setSeatsNo(numberPicker.getValue());
         renderSeats();
+    }
+
+    private void fetchUser() {
+        loadingDialog.show();
+        userVm.getUser().observe(this, new Observer<AppUser>() {
+            @Override
+            public void onChanged(@Nullable AppUser user) {
+                if (user != null) {
+                    appUser = user;
+                }
+                loadingDialog.dismiss();
+            }
+        });
     }
 
     private void defineUI() {

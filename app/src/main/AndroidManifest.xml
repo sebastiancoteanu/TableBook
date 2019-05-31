@@ -15,27 +15,27 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".activities.SuccessfulOrder"
+            android:name=".views.SuccessfulOrder"
             android:configChanges="orientation"
             android:screenOrientation="portrait"
             android:theme="@style/PrimaryFullScreenTheme" />
         <activity
-            android:name=".activities.CheckoutActivity"
+            android:name=".views.CheckoutActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".activities.PlaceDetailsActivity"
+            android:name=".views.PlaceDetailsActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".activities.ForgotPasswordActivity"
+            android:name=".views.ForgotPasswordActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait"
             android:theme="@style/PrimaryFullScreenTheme" />
         <activity
-            android:name=".activities.SplashActivity"
+            android:name=".views.SplashActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait"
             android:theme="@style/SplashTheme">
@@ -46,7 +46,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.MainActivity"
+            android:name=".views.MainActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme">
@@ -57,22 +57,22 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.IntroActivity"
+            android:name=".views.IntroActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait"
             android:theme="@style/PrimaryFullScreenTheme" />
         <activity
-            android:name=".activities.SigninActivity"
+            android:name=".views.SigninActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait"
             android:theme="@style/PrimaryFullScreenTheme" />
         <activity
-            android:name=".activities.SignupActivity"
+            android:name=".views.SignupActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait"
             android:theme="@style/PrimaryFullScreenTheme" />
         <activity
-            android:name=".activities.InfoConfirm"
+            android:name=".views.InfoConfirm"
             android:configChanges="orientation"
             android:screenOrientation="portrait"
             android:theme="@style/PrimaryFullScreenTheme" />

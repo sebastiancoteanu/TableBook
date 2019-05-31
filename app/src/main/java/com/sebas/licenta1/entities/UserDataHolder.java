@@ -1,4 +1,4 @@
-package com.sebas.licenta1.dto;
+package com.sebas.licenta1.entities;
 
 public class UserDataHolder {
     private AppUser appUser;

@@ -1,8 +1,9 @@
-package com.sebas.licenta1.activities;
+package com.sebas.licenta1.views;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
@@ -11,7 +12,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,17 +36,15 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.auth.User;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.sebas.licenta1.BuildConfig;
 import com.sebas.licenta1.R;
-import com.sebas.licenta1.dto.AppUser;
-import com.sebas.licenta1.dto.UserDataHolder;
+import com.sebas.licenta1.entities.AppUser;
 import com.sebas.licenta1.utils.LoadingDialog;
+import com.sebas.licenta1.viewmodels.UserViewModel;
 
 public class ProfileFragment extends Fragment implements View.OnClickListener {
     private GoogleSignInClient mGoogleSignInClient;
@@ -60,6 +58,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
     private DocumentReference usersRef;
     private ImageView profilePicture;
     private LoadingDialog loadingDialog;
+    private UserViewModel userVm;
 
     private static final int GALLERY_REQUEST_CODE = 9000;
 
@@ -67,6 +66,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_profile, container, false);
+        userVm = ViewModelProviders.of(this).get(UserViewModel.class);
 
         configureAuth();
         configureDb();
@@ -88,10 +88,22 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        appUser = UserDataHolder.getInstance().getAppUser();
         defineUI(view);
         createListeners(view);
-        setDataInFields();
+        fetchUser();
+    }
+
+    public void fetchUser() {
+        loadingDialog.show();
+        userVm.getUser().observe(this, new Observer<AppUser>() {
+            @Override
+            public void onChanged(@Nullable AppUser user) {
+                appUser = user;
+                setDataInFields();
+                loadingDialog.dismiss();
+            }
+        });
+
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data){
@@ -159,21 +171,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
 
     private void updateUser(String profileImgUrl) {
         appUser.setProfileImgUrl(profileImgUrl);
-        usersRef
-            .set(appUser)
-            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                @Override
-                public void onSuccess(Void aVoid) {
-                    loadGlidePhoto();
-                }
-            })
-            .addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_LONG).show();
-                    loadingDialog.dismiss();
-                }
-            });
+        userVm.updateUser(appUser);
     }
 
     private void defineUI(View v) {

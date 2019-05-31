@@ -1,7 +1,6 @@
 package com.sebas.licenta1.adapters;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -11,8 +10,7 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.sebas.licenta1.R;
-import com.sebas.licenta1.activities.PlaceDetailsActivity;
-import com.sebas.licenta1.dto.PlaceSummary;
+import com.sebas.licenta1.entities.PlaceSummary;
 
 import java.util.ArrayList;
 

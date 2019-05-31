@@ -1,4 +1,4 @@
-package com.sebas.licenta1.activities;
+package com.sebas.licenta1.views;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;

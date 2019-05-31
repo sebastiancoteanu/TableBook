@@ -1,7 +1,5 @@
-package com.sebas.licenta1.activities;
+package com.sebas.licenta1.views;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;

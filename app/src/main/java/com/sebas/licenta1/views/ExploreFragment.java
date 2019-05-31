@@ -1,4 +1,4 @@
-package com.sebas.licenta1.activities;
+package com.sebas.licenta1.views;
 
 import android.content.Context;
 import android.content.Intent;
@@ -25,7 +25,7 @@ import com.google.android.libraries.places.api.net.PlacesClient;
 import com.sebas.licenta1.BuildConfig;
 import com.sebas.licenta1.R;
 import com.sebas.licenta1.adapters.PlaceSummaryAdapter;
-import com.sebas.licenta1.dto.PlaceSummary;
+import com.sebas.licenta1.entities.PlaceSummary;
 import com.sebas.licenta1.utils.EndlessRecyclerOnScrollListener;
 import com.sebas.licenta1.utils.LoadingDialog;
 

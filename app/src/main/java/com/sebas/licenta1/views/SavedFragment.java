@@ -1,4 +1,4 @@
-package com.sebas.licenta1.activities;
+package com.sebas.licenta1.views;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;

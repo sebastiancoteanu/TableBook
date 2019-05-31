@@ -1,6 +1,9 @@
-package com.sebas.licenta1.activities;
+package com.sebas.licenta1.views;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -10,64 +13,42 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.sebas.licenta1.R;
-import com.sebas.licenta1.dto.PlaceDetails;
-import com.sebas.licenta1.dto.PlaceSummary;
+import com.sebas.licenta1.entities.PlaceDetails;
+import com.sebas.licenta1.entities.PlaceSummary;
 import com.sebas.licenta1.utils.LoadingDialog;
-
-import java.util.List;
-
-import javax.annotation.Nullable;
+import com.sebas.licenta1.viewmodels.PlaceViewModel;
 
 public class PlaceDetailsActivity extends AppCompatActivity {
-    private CollectionReference placeRef;
-    private FirebaseFirestore firestoreDb;
     private PlaceDetails placeDetails;
     private PlaceSummary googleData;
     private LoadingDialog loadingDialog;
     private Button bookButton;
+    private PlaceViewModel placeVm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_place_details);
 
+        placeVm = ViewModelProviders.of(this).get(PlaceViewModel.class);
+
         defineUI();
         getIntentData();
-        configureDb();
         getPlaceById();
         createListeners();
     }
 
-    private void configureDb() {
-        firestoreDb = FirebaseFirestore.getInstance();
-        placeRef = firestoreDb.collection("places");
-    }
-
     private void getPlaceById() {
         loadingDialog.show();
-
-        placeRef
-            .whereEqualTo("placeID", googleData.getPlaceId())
-            .addSnapshotListener(new EventListener<QuerySnapshot>() {
-                @Override
-                public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
-                    List<DocumentSnapshot> documentSnapshots = queryDocumentSnapshots.getDocuments();
-
-                    if(documentSnapshots.size() != 0) {
-                        placeDetails = documentSnapshots.get(0).toObject(PlaceDetails.class);
-                    }
-
-                    setDataInView();
-                    loadingDialog.dismiss();
-                }
-            });
+        placeVm.getPlace(googleData.getPlaceId()).observe(this, new Observer<PlaceDetails>() {
+            @Override
+            public void onChanged(@Nullable PlaceDetails place) {
+                placeDetails = place;
+                setDataInView();
+                loadingDialog.dismiss();
+            }
+        });
     }
 
     private void setDataInView() {
