@@ -34,9 +34,6 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -46,16 +43,16 @@ import com.sebas.licenta1.entities.AppUser;
 import com.sebas.licenta1.utils.LoadingDialog;
 import com.sebas.licenta1.viewmodels.UserViewModel;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class ProfileFragment extends Fragment implements View.OnClickListener {
     private GoogleSignInClient mGoogleSignInClient;
     private FirebaseAuth mAuth;
-    private FirebaseUser firebaseUser;
-    private FirebaseFirestore firestoreDb;
     private StorageReference storageRef;
     private StorageReference fileReference;
     private AppUser appUser;
     private ImageButton signOut;
-    private DocumentReference usersRef;
     private ImageView profilePicture;
     private LoadingDialog loadingDialog;
     private UserViewModel userVm;
@@ -122,7 +119,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
     }
 
     private void dbPhotoUpload(Uri imageUri) {
-        fileReference = storageRef.child(firebaseUser.getUid());
+        fileReference = storageRef.child(mAuth.getCurrentUser().getUid());
         loadingDialog.show();
         fileReference.putFile(imageUri)
             .continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
@@ -139,7 +136,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
                 @Override
                 public void onComplete(@NonNull Task<Uri> task) {
                     if (task.isSuccessful()) {
-                        updateUser(task.getResult().toString());
+                        updateUserPhoto(task.getResult().toString());
                     } else {
                         Toast.makeText(getActivity(), "User update failed", Toast.LENGTH_LONG).show();
                         loadingDialog.dismiss();
@@ -169,9 +166,26 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
                 .into(profilePicture);
     }
 
-    private void updateUser(String profileImgUrl) {
+    private void updateUserPhoto(String profileImgUrl) {
+        loadingDialog.show();
+
+        Map<String, Object> userMap = new HashMap<>();
+        userMap.put("profileImgUrl", profileImgUrl);
+
         appUser.setProfileImgUrl(profileImgUrl);
-        userVm.updateUser(appUser);
+        userVm.updateUser(userMap).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                loadingDialog.dismiss();
+                userVm.getUser().setValue(appUser);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                loadingDialog.dismiss();
+                Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     private void defineUI(View v) {
@@ -204,9 +218,6 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
     }
 
     private void configureDb() {
-        firestoreDb = FirebaseFirestore.getInstance();
-        firebaseUser = mAuth.getCurrentUser();
-        usersRef = firestoreDb.collection("users").document(firebaseUser.getUid());
         storageRef = FirebaseStorage.getInstance().getReference("profilePictures");
     }
 

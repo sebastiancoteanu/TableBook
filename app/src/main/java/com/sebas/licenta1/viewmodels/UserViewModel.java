@@ -6,14 +6,16 @@ import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.sebas.licenta1.entities.AppUser;
+import com.sebas.licenta1.entities.Reservation;
+
+import java.util.ArrayList;
+import java.util.Map;
 
 public class UserViewModel extends ViewModel {
     private MutableLiveData<AppUser> user;
@@ -28,13 +30,28 @@ public class UserViewModel extends ViewModel {
         return user;
     }
 
-    public void updateUser(final AppUser user) {
-        userRef.document(FirebaseAuth.getInstance().getCurrentUser().getUid()).set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                getUser().setValue(user);
-            }
-        });
+    public Task<Void> addReservation(Reservation reservation) {
+        ArrayList<Reservation> reservationList = user.getValue().getReservations();
+        if(reservationList == null) {
+            reservationList = new ArrayList<>();
+        }
+        reservationList.add(reservation);
+
+        return userRef
+            .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+            .update("reservations", reservationList);
+    }
+
+    public Task<Void> createUser(Map<String, Object> updatedFields) {
+        return userRef
+            .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+            .set(updatedFields);
+    }
+
+    public Task<Void> updateUser(Map<String, Object> updatedFields) {
+        return userRef
+            .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+            .update(updatedFields);
     }
 
     private void loadUser() {

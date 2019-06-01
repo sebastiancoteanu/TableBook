@@ -13,6 +13,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.sebas.licenta1.R;
+import com.sebas.licenta1.utils.LoadingDialog;
 
 public class ForgotPasswordActivity extends AppCompatActivity {
 
@@ -21,6 +22,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
     private EditText emailAddress;
     private FirebaseAuth firebaseAuth;
     private ImageView backIcon;
+    private LoadingDialog loadingDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +51,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
     private void defineView() {
         emailAddress = findViewById(R.id.emailAddress);
         backIcon = findViewById(R.id.backIcon);
+        loadingDialog = new LoadingDialog(this);
     }
 
     private Boolean isValidEmail(String email){
@@ -72,6 +75,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
             return;
         }
 
+        loadingDialog.show();
         firebaseAuth.sendPasswordResetEmail(emailString)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
@@ -83,6 +87,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
                             Toast.makeText(ForgotPasswordActivity.this, getMessage((FirebaseAuthException) task.getException()),
                                     Toast.LENGTH_LONG).show();
                         }
+                        loadingDialog.dismiss();
                     }
                 });
     }

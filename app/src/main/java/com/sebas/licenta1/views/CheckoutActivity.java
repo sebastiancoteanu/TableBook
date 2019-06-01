@@ -2,12 +2,10 @@ package com.sebas.licenta1.views;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -21,14 +19,9 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.sebas.licenta1.R;
-import com.sebas.licenta1.entities.AppUser;
 import com.sebas.licenta1.entities.PlaceDetails;
 import com.sebas.licenta1.entities.Reservation;
-import com.sebas.licenta1.entities.UserDataHolder;
 import com.sebas.licenta1.utils.LoadingDialog;
 import com.sebas.licenta1.utils.NumberPickerDialog;
 import com.sebas.licenta1.viewmodels.UserViewModel;
@@ -38,7 +31,6 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 
 public class CheckoutActivity extends AppCompatActivity implements NumberPicker.OnValueChangeListener {
     private TextView datePick;
@@ -47,10 +39,7 @@ public class CheckoutActivity extends AppCompatActivity implements NumberPicker.
     private PlaceDetails placeDetails;
     private Reservation reservation;
     private NumberPickerDialog numberPickerDialog;
-    private FirebaseFirestore firestoreDb;
-    private DocumentReference usersRef;
     private LoadingDialog loadingDialog;
-    private AppUser appUser;
     private LocalDate localDate;
     private LocalTime localTime;
     private UserViewModel userVm;
@@ -65,9 +54,7 @@ public class CheckoutActivity extends AppCompatActivity implements NumberPicker.
 
         getIntentData();
         defineUI();
-        configureDb();
         createListeners();
-        fetchUser();
     }
 
     @Override
@@ -75,19 +62,6 @@ public class CheckoutActivity extends AppCompatActivity implements NumberPicker.
         numberPickerDialog.dismiss();
         reservation.setSeatsNo(numberPicker.getValue());
         renderSeats();
-    }
-
-    private void fetchUser() {
-        loadingDialog.show();
-        userVm.getUser().observe(this, new Observer<AppUser>() {
-            @Override
-            public void onChanged(@Nullable AppUser user) {
-                if (user != null) {
-                    appUser = user;
-                }
-                loadingDialog.dismiss();
-            }
-        });
     }
 
     private void defineUI() {
@@ -136,11 +110,6 @@ public class CheckoutActivity extends AppCompatActivity implements NumberPicker.
         seatsPick.setText(renderedSeats);
     }
 
-    private void configureDb() {
-        firestoreDb = FirebaseFirestore.getInstance();
-        usersRef = firestoreDb.collection("users").document(FirebaseAuth.getInstance().getCurrentUser().getUid());
-    }
-
     private void createListeners() {
         ImageView backButton =  findViewById(R.id.backIcon);
         Button checkoutButton = findViewById(R.id.confirm_button);
@@ -150,7 +119,6 @@ public class CheckoutActivity extends AppCompatActivity implements NumberPicker.
 
         backButton.setOnClickListener(new ImageView.OnClickListener() {
             public void onClick(View v) {
-                // go to previous state
                 finish();
             }
         });
@@ -186,16 +154,7 @@ public class CheckoutActivity extends AppCompatActivity implements NumberPicker.
 
     private void createReservation() {
         loadingDialog.show();
-
-        ArrayList<Reservation> reservationList = appUser.getReservations();
-        if(reservationList == null) {
-            reservationList = new ArrayList<>();
-        }
-
-        reservationList.add(reservation);
-
-        usersRef
-                .update("reservations", reservationList)
+        userVm.addReservation(reservation)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {

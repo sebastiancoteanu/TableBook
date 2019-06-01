@@ -1,7 +1,10 @@
 package com.sebas.licenta1.views;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
@@ -30,7 +33,9 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.sebas.licenta1.BuildConfig;
 import com.sebas.licenta1.R;
+import com.sebas.licenta1.entities.AppUser;
 import com.sebas.licenta1.utils.LoadingDialog;
+import com.sebas.licenta1.viewmodels.UserViewModel;
 
 public class SigninActivity extends AppCompatActivity {
 
@@ -47,6 +52,7 @@ public class SigninActivity extends AppCompatActivity {
     private TextView forgotPassword;
     private TextView signup;
     private LoadingDialog loadingDialog;
+    private UserViewModel userVm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -162,10 +168,25 @@ public class SigninActivity extends AppCompatActivity {
     }
 
     private void updateUI(FirebaseUser user) {
-        if (user != null) {
-            Intent intent = new Intent(this, InfoConfirm.class);
-            startActivity(intent);
-        }
+        loadingDialog.show();
+        userVm = ViewModelProviders.of(this).get(UserViewModel.class);
+        userVm.getUser().observe(this, new Observer<AppUser>() {
+            @Override
+            public void onChanged(@Nullable AppUser appUser) {
+                loadingDialog.dismiss();
+
+                Class cls = InfoConfirm.class;
+                if(appUser != null) {
+                    cls = MainActivity.class;
+                }
+
+                // after google login and firebase auth check if user already exists in database
+                if (appUser != null) {
+                    Intent intent = new Intent(getApplicationContext(), cls);
+                    startActivity(intent);
+                }
+            }
+        });
     }
 
     private Boolean isValidEmail(String email){

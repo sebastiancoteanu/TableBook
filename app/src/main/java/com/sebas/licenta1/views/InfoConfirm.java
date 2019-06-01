@@ -1,7 +1,10 @@
 package com.sebas.licenta1.views;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,11 +14,14 @@ import android.widget.ImageView;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.sebas.licenta1.R;
+import com.sebas.licenta1.entities.AppUser;
 import com.sebas.licenta1.utils.LoadingDialog;
+import com.sebas.licenta1.viewmodels.UserViewModel;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,6 +34,8 @@ public class InfoConfirm extends AppCompatActivity {
 
     private FirebaseFirestore firestoreDb;
     private FirebaseUser firebaseUser;
+    private UserViewModel userVm;
+    private AppUser appUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +43,7 @@ public class InfoConfirm extends AppCompatActivity {
         setContentView(R.layout.activity_info_confirm);
 
         firestoreDb = FirebaseFirestore.getInstance();
+        userVm = ViewModelProviders.of(this).get(UserViewModel.class);
 
         configureUI();
     }
@@ -58,6 +67,7 @@ public class InfoConfirm extends AppCompatActivity {
         String lastName = "";
         String email = firebaseUser.getEmail();
         String displayedName = firebaseUser.getDisplayName();
+
         if(displayedName != null) {
             firstName = displayedName.substring(0, displayedName.lastIndexOf(" "));
             lastName = displayedName.substring(displayedName.lastIndexOf(" ") + 1);
@@ -90,32 +100,29 @@ public class InfoConfirm extends AppCompatActivity {
         String lastName = lastNameText.getText().toString();
         String emailAddress = emailText.getText().toString();
         String profileImgUrl = firebaseUser.getPhotoUrl().toString();
-        String id = firebaseUser.getUid();
 
-        Map<String, Object> user = new HashMap<>();
-        user.put("firstName", firstName);
-        user.put("lastName", lastName);
-        user.put("emailAddress", emailAddress);
-        user.put("profileImgUrl", profileImgUrl);
+        Map<String, Object> userMap = new HashMap<>();
+        userMap.put("firstName", firstName);
+        userMap.put("lastName", lastName);
+        userMap.put("emailAddress", emailAddress);
+        userMap.put("profileImgUrl", profileImgUrl);
 
         loadingDialog.show();
 
-        firestoreDb
-            .collection("users")
-            .document(id)
-            .set(user)
+        userVm
+            .createUser(userMap)
             .addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
                 public void onSuccess(Void aVoid) {
-                    loadingDialog.dismiss();
-                    goToMainScreen();
+                loadingDialog.dismiss();
+                goToMainScreen();
                 }
             })
             .addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
-                    loadingDialog.dismiss();
-                    Log.w("Error", e.getMessage());
+                loadingDialog.dismiss();
+                Log.w("Error", e.getMessage());
                 }
             });
     }
