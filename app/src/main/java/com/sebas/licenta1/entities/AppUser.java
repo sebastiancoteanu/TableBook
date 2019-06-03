@@ -9,6 +9,7 @@ public class AppUser implements Serializable {
     private String emailAddress;
     private String profileImgUrl;
     private ArrayList<Reservation> reservations;
+    private ArrayList<PlaceDetails> savedPlaces;
 
     public AppUser() {
 

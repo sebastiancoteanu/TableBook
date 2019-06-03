@@ -69,7 +69,6 @@ public class CheckoutActivity extends AppCompatActivity implements NumberPicker.
         timePick = findViewById(R.id.time_pick);
         seatsPick = findViewById(R.id.seats_pick);
         loadingDialog = new LoadingDialog(this);
-
         setDefaultValues();
     }
 

@@ -26,6 +26,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -108,6 +109,7 @@ public class SigninActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             loadingDialog.dismiss();
                             FirebaseUser user = mAuth.getCurrentUser();
+                            logSignin("firebaseAuthWithGoogle");
                             updateUI(user);
                         } else {
                             loadingDialog.dismiss();
@@ -167,26 +169,28 @@ public class SigninActivity extends AppCompatActivity {
         });
     }
 
-    private void updateUI(FirebaseUser user) {
-        loadingDialog.show();
-        userVm = ViewModelProviders.of(this).get(UserViewModel.class);
-        userVm.getUser().observe(this, new Observer<AppUser>() {
-            @Override
-            public void onChanged(@Nullable AppUser appUser) {
-                loadingDialog.dismiss();
+        private void updateUI(FirebaseUser user) {
+        if(user != null) {
+            loadingDialog.show();
+            userVm = ViewModelProviders.of(this).get(UserViewModel.class);
+            userVm.getUser().observe(this, new Observer<AppUser>() {
+                @Override
+                public void onChanged(@Nullable AppUser appUser) {
+                    loadingDialog.dismiss();
 
-                Class cls = InfoConfirm.class;
-                if(appUser != null) {
-                    cls = MainActivity.class;
-                }
+                    Class cls = InfoConfirm.class;
+                    if(appUser != null) {
+                        cls = MainActivity.class;
+                    }
 
-                // after google login and firebase auth check if user already exists in database
-                if (appUser != null) {
-                    Intent intent = new Intent(getApplicationContext(), cls);
-                    startActivity(intent);
+                    // after google login and firebase auth check if user already exists in database
+                    if (appUser != null) {
+                        Intent intent = new Intent(getApplicationContext(), cls);
+                        startActivity(intent);
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
     private Boolean isValidEmail(String email){
@@ -279,6 +283,7 @@ public class SigninActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             FirebaseUser user = mAuth.getCurrentUser();
+                            logSignin("emailPassSignIn");
                             updateUI(user);
                         } else {
                             // If sign in fails, display a message to the user.
@@ -288,5 +293,11 @@ public class SigninActivity extends AppCompatActivity {
                         }
                     }
                 });
+    }
+
+    private void logSignin(String methodName) {
+        Bundle bundle = new Bundle();
+        bundle.putString(FirebaseAnalytics.Param.METHOD, methodName);
+        FirebaseAnalytics.getInstance(this).logEvent(FirebaseAnalytics.Event.LOGIN, bundle);
     }
 }

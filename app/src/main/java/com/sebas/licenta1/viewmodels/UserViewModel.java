@@ -31,15 +31,11 @@ public class UserViewModel extends ViewModel {
     }
 
     public Task<Void> addReservation(Reservation reservation) {
-        ArrayList<Reservation> reservationList = user.getValue().getReservations();
-        if(reservationList == null) {
-            reservationList = new ArrayList<>();
-        }
-        reservationList.add(reservation);
-
         return userRef
             .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
-            .update("reservations", reservationList);
+            .collection("reservations")
+            .document()
+            .set(reservation);
     }
 
     public Task<Void> createUser(Map<String, Object> updatedFields) {
