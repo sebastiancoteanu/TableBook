@@ -15,6 +15,7 @@ import android.widget.ImageView;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -44,6 +45,8 @@ public class InfoConfirm extends AppCompatActivity {
 
         firestoreDb = FirebaseFirestore.getInstance();
         userVm = ViewModelProviders.of(this).get(UserViewModel.class);
+
+        FirebaseAnalytics.getInstance(this).setCurrentScreen(this, "Info Confirm", null);
 
         configureUI();
     }

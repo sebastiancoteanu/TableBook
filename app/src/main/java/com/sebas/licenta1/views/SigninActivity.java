@@ -74,6 +74,7 @@ public class SigninActivity extends AppCompatActivity {
 
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
         mAuth = FirebaseAuth.getInstance();
+        FirebaseAnalytics.getInstance(this).setCurrentScreen(this, "Signin", null);
     }
 
     @Override
@@ -183,11 +184,8 @@ public class SigninActivity extends AppCompatActivity {
                         cls = MainActivity.class;
                     }
 
-                    // after google login and firebase auth check if user already exists in database
-                    if (appUser != null) {
-                        Intent intent = new Intent(getApplicationContext(), cls);
-                        startActivity(intent);
-                    }
+                    Intent intent = new Intent(getApplicationContext(), cls);
+                    startActivity(intent);
                 }
             });
         }

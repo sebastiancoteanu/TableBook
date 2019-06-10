@@ -62,6 +62,8 @@ public class UserViewModel extends ViewModel {
                     DocumentSnapshot documentSnapshot = task.getResult();
                     if(documentSnapshot.exists()) {
                         user.setValue(documentSnapshot.toObject(AppUser.class));
+                    } else {
+                        user.setValue(null);
                     }
                 }
                 }

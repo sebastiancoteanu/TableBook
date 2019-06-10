@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.sebas.licenta1.R;
 import com.sebas.licenta1.entities.PlaceDetails;
 import com.sebas.licenta1.entities.Reservation;
@@ -158,6 +159,9 @@ public class CheckoutActivity extends AppCompatActivity implements NumberPicker.
                     @Override
                     public void onSuccess(Void aVoid) {
                         loadingDialog.dismiss();
+                        Bundle bundle = new Bundle();
+                        bundle.putString(FirebaseAnalytics.Param.METHOD, "createReservation");
+                        FirebaseAnalytics.getInstance(getApplicationContext()).logEvent("order_created", bundle);
                         goToSuccessfulScreen();
                     }
                 })

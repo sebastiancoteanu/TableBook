@@ -13,6 +13,7 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.sebas.licenta1.R;
 import com.sebas.licenta1.entities.PlaceDetails;
 import com.sebas.licenta1.entities.PlaceSummary;
@@ -37,6 +38,7 @@ public class PlaceDetailsActivity extends AppCompatActivity {
         getIntentData();
         getPlaceById();
         createListeners();
+        FirebaseAnalytics.getInstance(this).setCurrentScreen(this, "View Place", null);
     }
 
     private void getPlaceById() {

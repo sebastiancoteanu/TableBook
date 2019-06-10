@@ -35,6 +35,7 @@ import com.android.volley.toolbox.Volley;
 import com.google.android.libraries.places.api.Places;
 
 import com.google.android.libraries.places.api.net.PlacesClient;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.sebas.licenta1.BuildConfig;
 import com.sebas.licenta1.R;
 import com.sebas.licenta1.adapters.PlaceSummaryAdapter;
@@ -88,6 +89,7 @@ public class ExploreFragment extends Fragment {
         } else {
             requestLocationUpdates();
         }
+        FirebaseAnalytics.getInstance(getContext()).setCurrentScreen(getActivity(), "Forgot Password Screem", null);
     }
 
     private void configureRecycler() {
