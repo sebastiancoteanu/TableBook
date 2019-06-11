@@ -7,25 +7,35 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.BounceInterpolator;
+import android.view.animation.ScaleAnimation;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.sebas.licenta1.R;
+import com.sebas.licenta1.entities.AppUser;
 import com.sebas.licenta1.entities.PlaceDetails;
 import com.sebas.licenta1.entities.PlaceSummary;
 import com.sebas.licenta1.utils.LoadingDialog;
 import com.sebas.licenta1.viewmodels.PlaceViewModel;
+import com.sebas.licenta1.viewmodels.UserViewModel;
 
 public class PlaceDetailsActivity extends AppCompatActivity {
     private PlaceDetails placeDetails;
     private PlaceSummary googleData;
     private LoadingDialog loadingDialog;
     private Button bookButton;
+    private ToggleButton favoriteButton;
     private PlaceViewModel placeVm;
+    private UserViewModel userVm;
+    private ScaleAnimation scaleAnimation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +43,7 @@ public class PlaceDetailsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_place_details);
 
         placeVm = ViewModelProviders.of(this).get(PlaceViewModel.class);
+        userVm = ViewModelProviders.of(this).get(UserViewModel.class);
 
         defineUI();
         getIntentData();
@@ -70,6 +81,9 @@ public class PlaceDetailsActivity extends AppCompatActivity {
         ((TextView) findViewById(R.id.expensiveness)).setText(expensiveness);
         ((RatingBar) findViewById(R.id.ratingBar)).setRating(googleData.getRating());
         ((TextView) findViewById(R.id.ratingsNumber)).setText(googleData.getRatingsNumber().toString());
+
+
+        userVm.getFavoritePlace(placeDetails).observe(this, placeDetails -> favoriteButton.setChecked(placeDetails != null));
     }
 
     private String getExpensiveness(Integer priceLevel) {
@@ -102,6 +116,11 @@ public class PlaceDetailsActivity extends AppCompatActivity {
     private void defineUI() {
         loadingDialog = new LoadingDialog(this);
         bookButton = findViewById(R.id.book_button);
+        scaleAnimation = new ScaleAnimation(0.7f, 1.0f, 0.7f, 1.0f, Animation.RELATIVE_TO_SELF, 0.7f, Animation.RELATIVE_TO_SELF, 0.7f);
+        scaleAnimation.setDuration(500);
+        BounceInterpolator bounceInterpolator = new BounceInterpolator();
+        scaleAnimation.setInterpolator(bounceInterpolator);
+        favoriteButton = findViewById(R.id.button_favorite);
     }
 
     private void createListeners() {
@@ -110,6 +129,18 @@ public class PlaceDetailsActivity extends AppCompatActivity {
             public void onClick(View v) {
                 // go to previous state
                 finish();
+            }
+        });
+
+        favoriteButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                buttonView.startAnimation(scaleAnimation);
+                if(isChecked) {
+                    userVm.addToFavorite(placeDetails);
+                } else {
+                    userVm.removeFromFavorite(placeDetails);
+                }
             }
         });
 

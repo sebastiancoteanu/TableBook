@@ -9,18 +9,19 @@ public class AppUser implements Serializable {
     private String emailAddress;
     private String profileImgUrl;
     private ArrayList<Reservation> reservations;
-    private ArrayList<PlaceDetails> savedPlaces;
+    private ArrayList<PlaceDetails> favoritePlaces;
 
     public AppUser() {
 
     }
 
-    public AppUser(String firstName, String lastName, String emailAddress, String profileImgUrl, ArrayList<Reservation> reservations) {
+    public AppUser(String firstName, String lastName, String emailAddress, String profileImgUrl, ArrayList<Reservation> reservations, ArrayList<PlaceDetails> favoritePlaces) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.emailAddress = emailAddress;
         this.profileImgUrl = profileImgUrl;
         this.reservations = reservations;
+        this.favoritePlaces = favoritePlaces;
     }
 
     public String getFirstName() {
@@ -70,5 +71,13 @@ public class AppUser implements Serializable {
 
     public void setReservations(ArrayList<Reservation> reservations) {
         this.reservations = reservations;
+    }
+
+    public ArrayList<PlaceDetails> getFavoritePlaces() {
+        return favoritePlaces;
+    }
+
+    public void setFavoritePlaces(ArrayList<PlaceDetails> favoritePlaces) {
+        this.favoritePlaces = favoritePlaces;
     }
 }
